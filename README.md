@@ -66,7 +66,7 @@
 
 ## 配置struts-config.xml
 
-创建webapp/struts/struts-config.xml文件
+创建/WEB-INF/struts-config.xml
 
 ``` xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -345,6 +345,8 @@ log4j.logger.java.sql.PreparedStatement=DEBUG
 
 ``` Java
 private static final Logger LOGGER = LoggerFactory.getLogger(EmpAction.class);
+
+LOGGER.info('msg');
 ```
 
 ## 额外配置
@@ -428,7 +430,9 @@ private static final Logger LOGGER = LoggerFactory.getLogger(EmpAction.class);
 </profiles>
 ```
 
-位于build标签中
+activeByDefault 代表默认激活
+
+位于build标签中，打包时，不包括env/*.properties
 
 ``` xml
 <filters>
@@ -445,7 +449,7 @@ private static final Logger LOGGER = LoggerFactory.getLogger(EmpAction.class);
 * prod.properties
   
 分别代表不同的环境，今后使用mvn命令打包的时候即可使用
-> mvn clean install -Pdev
+> mvn clean install -Potest
 
 ### 资源配置
 
