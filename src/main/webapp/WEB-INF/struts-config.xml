@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts-config PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 1.2//EN"
+        "http://jakarta.apache.org/struts/dtds/struts-config_1_2.dtd">
+
+<struts-config>
+    <form-beans>
+        <form-bean name="empForm" type="com.microandroid.moudle.emp.bean.EmpForm"/>
+    </form-beans>
+    <action-mappings>
+        <action path="/emp" name="empForm" type="com.microandroid.moudle.emp.action.EmpAction">
+            <forward name="index" path="/WEB-INF/views/emp/index.jsp"/>
+            <forward name="success" path="/WEB-INF/views/emp/success.jsp"/>
+            <forward name="error" path="/WEB-INF/views/emp/error.jsp"/>
+        </action>
+    </action-mappings>
+</struts-config>
