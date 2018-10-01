@@ -605,3 +605,55 @@ public class EmpAction extends Action {
 ```
 
 * 方案2
+
+使用DispatchAction
+
+1. 引用依赖
+
+``` xml
+        <!--struts1 extras-->
+        <dependency>
+            <groupId>org.apache.struts</groupId>
+            <artifactId>struts-extras</artifactId>
+            <version>1.3.10</version>
+        </dependency>
+```
+
+2. 类继承自DispatchAction
+
+``` Java
+public class EmpAction extends DispatchAction {
+    private static final Logger LOGGER = LoggerFactory.getLogger(EmpAction.class);
+
+    @Override
+    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        LOGGER.info("execute");
+        return mapping.findForward("success");
+    }
+
+    public ActionForward save(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        LOGGER.info("save");
+        return mapping.findForward("save");
+    }
+}
+
+```
+
+3. 配置action parameter="method"
+
+这是必须的
+
+``` Java
+<action path="/emp"
+        name="empForm"
+        type="com.microandroid.moudle.emp.action.EmpAction"
+        parameter="method"
+>
+```
+
+4. 注意
+
+一旦配置，今后的请求中就必须添加method作为参数，否则就要报错。
+> javax.servlet.ServletException: Request[/emp] does not contain handler parameter named 'method'.  This may be caused by whitespace in the label text.
+
+并且不能重写@Override public ActionForward execute方法，否则上面的配置都没有作用。

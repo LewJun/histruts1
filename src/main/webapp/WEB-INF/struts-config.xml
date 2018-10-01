@@ -8,7 +8,11 @@
         <form-bean name="empForm" type="com.microandroid.moudle.emp.bean.EmpForm"/>
     </form-beans>
     <action-mappings>
-        <action path="/emp" name="empForm" type="com.microandroid.moudle.emp.action.EmpAction">
+        <action path="/emp"
+                name="empForm"
+                type="com.microandroid.moudle.emp.action.EmpAction"
+                parameter="method"
+        >
             <forward name="index" path="/WEB-INF/views/emp/index.jsp"/>
             <forward name="success" path="/WEB-INF/views/emp/success.jsp"/>
             <forward name="error" path="/WEB-INF/views/emp/error.jsp"/>
