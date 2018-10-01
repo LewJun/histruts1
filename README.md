@@ -472,3 +472,136 @@ activeByDefault 代表默认激活
     </resource>
 </resources>
 ```
+
+## 加入Service和Mapper的空实现
+
+* Service
+
+``` Java
+package com.microandroid.moudle.emp.service;
+
+import com.microandroid.moudle.emp.bean.EmpForm;
+
+import java.util.List;
+
+public interface IEmpService<T extends EmpForm> {
+
+    int deleteByPrimaryKey(Integer id) throws Exception;
+
+    int inserts(List<T> ts) throws Exception;
+
+    int insert(T record) throws Exception;
+
+    int insertSelective(T record) throws Exception;
+
+    T selectByPrimaryKey(Integer id) throws Exception;
+
+    List<T> selectAll() throws Exception;
+
+    int updateByPrimaryKeySelective(T record) throws Exception;
+
+    int updateByPrimaryKey(T record) throws Exception;
+}
+
+
+```
+
+* Service 实现
+
+``` Java
+package com.microandroid.moudle.emp.service.impl;
+
+import com.microandroid.moudle.emp.bean.EmpForm;
+import com.microandroid.moudle.emp.service.IEmpService;
+
+import java.util.List;
+
+public class EmpServiceImpl implements IEmpService<EmpForm> {
+    @Override
+    public int deleteByPrimaryKey(Integer id) throws Exception {
+        return 0;
+    }
+
+    @Override
+    public int inserts(List<EmpForm> empForms) throws Exception {
+        return 0;
+    }
+
+    @Override
+    public int insert(EmpForm record) throws Exception {
+        return 0;
+    }
+
+    @Override
+    public int insertSelective(EmpForm record) throws Exception {
+        return 0;
+    }
+
+    @Override
+    public EmpForm selectByPrimaryKey(Integer id) throws Exception {
+        return null;
+    }
+
+    @Override
+    public List<EmpForm> selectAll() throws Exception {
+        return null;
+    }
+
+    @Override
+    public int updateByPrimaryKeySelective(EmpForm record) throws Exception {
+        return 0;
+    }
+
+    @Override
+    public int updateByPrimaryKey(EmpForm record) throws Exception {
+        return 0;
+    }
+}
+
+
+```
+
+* Mapper
+
+``` Java
+package com.microandroid.moudle.emp.mapper;
+
+public interface IEmpMapper {
+
+}
+```
+
+## 实现页面跳转
+
+如果我想要执行指定方法例如 emp.do?save，emp.do?delete该怎么办呢？
+
+* 方案1
+
+通过req.getParameter("method");来得到method进行判断，然后执行指定的方法
+
+``` Java
+public class EmpAction extends Action {
+    private static final Logger LOGGER = LoggerFactory.getLogger(EmpAction.class);
+
+    @Override
+    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        LOGGER.info("execute");
+        String method = request.getParameter("method");
+        String forwardName = "success";
+        if ("save".equals(method)) {
+            forwardName = save(mapping, form, request, response).getName();
+        }
+        LOGGER.info(forwardName);
+        return mapping.findForward(forwardName);
+    }
+
+    public ActionForward save(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        LOGGER.info("save");
+        return mapping.findForward("save");
+    }
+
+
+}
+```
+
+* 方案2

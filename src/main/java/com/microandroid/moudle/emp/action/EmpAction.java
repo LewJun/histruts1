@@ -20,6 +20,19 @@ public class EmpAction extends Action {
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         LOGGER.info("execute");
-        return mapping.findForward("success");
+        String method = request.getParameter("method");
+        String forwardName = "success";
+        if ("save".equals(method)) {
+            forwardName = save(mapping, form, request, response).getName();
+        }
+        LOGGER.info(forwardName);
+        return mapping.findForward(forwardName);
     }
+
+    public ActionForward save(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        LOGGER.info("save");
+        return mapping.findForward("save");
+    }
+
+
 }

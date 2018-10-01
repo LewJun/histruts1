@@ -10,6 +10,8 @@
 </head>
 <body>
 <h1>hello world!</h1>
+<a href="emp.do">emp</a>
+<a href="emp.do?method=save">emp save</a>
 <script src="static/plugins/w3/w3.js"></script>
 </body>
 </html>
