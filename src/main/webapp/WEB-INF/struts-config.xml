@@ -1,20 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE struts-config PUBLIC
-        "-//Apache Software Foundation//DTD Struts Configuration 1.2//EN"
-        "http://jakarta.apache.org/struts/dtds/struts-config_1_2.dtd">
+        "-//Apache Software Foundation//DTD Struts Configuration 1.3//EN"
+        "http://jakarta.apache.org/struts/dtds/struts-config_1_3.dtd">
 
 <struts-config>
     <form-beans>
         <form-bean name="empForm" type="com.microandroid.moudle.emp.bean.EmpForm"/>
     </form-beans>
+
     <action-mappings>
-        <action path="/emp"
-                name="empForm"
-                type="com.microandroid.moudle.emp.action.EmpAction"
-                parameter="method"
-        >
-            <forward name="index" path="/WEB-INF/views/emp/index.jsp"/>
+        <!--parameter必须对应到EmpAction中的实际方法，缺点就是配置的action特别多，
+        实际工作中，我认为为了减少配置，最好还是使用DispatchAction-->
+        <action path="/emp/save" type="com.microandroid.moudle.emp.action.EmpAction" parameter="save">
             <forward name="success" path="/WEB-INF/views/emp/success.jsp"/>
+        </action>
+
+        <action path="/emp/delete" type="com.microandroid.moudle.emp.action.EmpAction" parameter="delete">
             <forward name="error" path="/WEB-INF/views/emp/error.jsp"/>
         </action>
     </action-mappings>

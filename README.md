@@ -575,7 +575,7 @@ public interface IEmpMapper {
 
 如果我想要执行指定方法例如 emp.do?save，emp.do?delete该怎么办呢？
 
-* 方案1
+### 方案1
 
 通过req.getParameter("method");来得到method进行判断，然后执行指定的方法
 
@@ -604,7 +604,7 @@ public class EmpAction extends Action {
 }
 ```
 
-* 方案2
+### 方案2
 
 使用DispatchAction
 
@@ -657,3 +657,52 @@ public class EmpAction extends DispatchAction {
 > javax.servlet.ServletException: Request[/emp] does not contain handler parameter named 'method'.  This may be caused by whitespace in the label text.
 
 并且不能重写@Override public ActionForward execute方法，否则上面的配置都没有作用。
+
+### 方案3
+
+1. 继承自MappingDispatchAction
+
+``` Java
+public class EmpAction extends MappingDispatchAction {
+    private static final Logger LOGGER = LoggerFactory.getLogger(EmpAction.class);
+
+    public ActionForward save(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        LOGGER.info("save");
+        return mapping.findForward("success");
+    }
+
+    public ActionForward delete(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        LOGGER.info("delete");
+        return mapping.findForward("error");
+    }
+}
+```
+
+2. 配置struts-config.xml
+
+``` xml
+    <action-mappings>
+        <!--parameter必须对应到EmpAction中的实际方法，缺点就是配置的action特别多，
+        实际工作中，我认为为了减少配置，最好还是使用DispatchAction-->
+        <action path="/emp/save" type="com.microandroid.moudle.emp.action.EmpAction" parameter="save">
+            <forward name="success" path="/WEB-INF/views/emp/success.jsp"/>
+        </action>
+
+        <action path="/emp/delete" type="com.microandroid.moudle.emp.action.EmpAction" parameter="delete">
+            <forward name="error" path="/WEB-INF/views/emp/error.jsp"/>
+        </action>
+    </action-mappings>
+```
+
+3. 访问
+
+``` html
+<a href="emp/save.do">emp save</a>
+<a href="emp/delete.do">emp delete</a>
+```
+
+4. 缺点
+
+> 随着方法的增多，配置的action也就特别的多，实际工作中，我认为为了减少配置，最好还是使用DispatchAction
+
+
