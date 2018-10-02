@@ -11,11 +11,13 @@
     <action-mappings>
         <!--parameter必须对应到EmpAction中的实际方法，缺点就是配置的action特别多，
         实际工作中，我认为为了减少配置，最好还是使用DispatchAction-->
-        <action path="/emp/save" type="com.microandroid.moudle.emp.action.EmpAction" parameter="save">
+        <action path="/empAction"
+                type="com.microandroid.moudle.emp.action.EmpAction"
+                name="empForm"
+                parameter="method"
+                scope="request"
+        >
             <forward name="success" path="/WEB-INF/views/emp/success.jsp"/>
-        </action>
-
-        <action path="/emp/delete" type="com.microandroid.moudle.emp.action.EmpAction" parameter="delete">
             <forward name="error" path="/WEB-INF/views/emp/error.jsp"/>
         </action>
     </action-mappings>
