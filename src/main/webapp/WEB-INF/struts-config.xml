@@ -17,6 +17,8 @@
                 parameter="method"
                 scope="request"
         >
+            <forward name="saveSuccess" path="/empAction.do?method=index"/>
+            <forward name="index" path="/WEB-INF/views/emp/index.jsp"/>
             <forward name="success" path="/WEB-INF/views/emp/success.jsp"/>
             <forward name="error" path="/WEB-INF/views/emp/error.jsp"/>
         </action>

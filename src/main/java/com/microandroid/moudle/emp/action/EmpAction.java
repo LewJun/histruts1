@@ -16,11 +16,16 @@ public class EmpAction extends BaseAppAction {
 
     public ActionForward save(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         LOGGER.info("save");
-        return mapping.findForward("success");
+        return mapping.findForward("saveSuccess");
     }
 
     public ActionForward delete(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         LOGGER.info("delete");
         return mapping.findForward("error");
+    }
+
+    public ActionForward index(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        LOGGER.info("delete");
+        return mapping.findForward("index");
     }
 }

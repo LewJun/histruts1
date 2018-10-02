@@ -705,4 +705,21 @@ public class EmpAction extends MappingDispatchAction {
 
 > 随着方法的增多，配置的action也就特别的多，实际工作中，我认为为了减少配置，最好还是使用DispatchAction
 
+## 由action跳转到另一个action
 
+``` xml
+  <forward name="saveSuccess" path="/empAction.do?method=index"/>
+  <forward name="index" path="/WEB-INF/views/emp/index.jsp"/>
+```
+
+``` Java
+  public ActionForward save(ActionMapping mapping, ActionForm form, HttpServletRequest req, HttpServletResponse resp) throws Exception {
+      LOGGER.info("save");
+      return mapping.findForward("saveSuccess");
+  }
+
+  public ActionForward index(ActionMapping mapping, ActionForm form, HttpServletRequest req, HttpServletResponse resp) throws Exception {
+      LOGGER.info("delete");
+      return mapping.findForward("index");
+  }
+```
