@@ -25,7 +25,7 @@ public class EmpAction extends BaseAppAction {
     }
 
     public ActionForward index(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        LOGGER.info("delete");
+        LOGGER.info("index");
         return mapping.findForward("index");
     }
 }
