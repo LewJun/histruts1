@@ -17,7 +17,12 @@
                 parameter="method"
                 scope="request"
         >
-            <forward name="saveSuccess" path="/empAction.do?method=index"/>
+            <!--
+            redirect：控制转发还是重定向
+            redirect=false 转发(默认值) RequestDispatch.forward 后退会看到之前的数据
+            redirect=true  重定向 HttpServletResponse.sendRedirects 后退bu会看到之前的数据
+            -->
+            <forward name="saveSuccess" path="/empAction.do?method=index" redirect="true"/>
             <forward name="index" path="/WEB-INF/views/emp/index.jsp"/>
             <forward name="success" path="/WEB-INF/views/emp/success.jsp"/>
             <forward name="error" path="/WEB-INF/views/emp/error.jsp"/>
