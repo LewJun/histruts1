@@ -26,6 +26,8 @@
             <forward name="index" path="/WEB-INF/views/emp/index.jsp"/>
             <forward name="success" path="/WEB-INF/views/emp/success.jsp"/>
             <forward name="error" path="/WEB-INF/views/emp/error.jsp"/>
+            <forward name="add" path="/WEB-INF/views/emp/add.jsp"/>
+            <forward name="edit" path="/WEB-INF/views/emp/edit.jsp"/>
         </action>
     </action-mappings>
 </struts-config>

@@ -4,6 +4,7 @@ import com.microandroid.base.BaseAppAction;
 import com.microandroid.moudle.emp.bean.EmpForm;
 import com.microandroid.moudle.emp.service.IEmpService;
 import com.microandroid.moudle.emp.service.impl.EmpServiceImpl;
+import com.microandroid.utils.MappingUtil;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -29,20 +30,17 @@ public class EmpAction extends BaseAppAction {
     public ActionForward save(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         LOGGER.info("save");
         LOGGER.info("{}", empService);
-        EmpForm record = new EmpForm();
-        int random = (int) (1 + Math.random() * 100);
-        record.setEmpno(random);
-        record.setEname("emp " + random);
+        EmpForm record = (EmpForm) form;
         empService.insert(record);
-        return mapping.findForward("saveSuccess");
+        return MappingUtil.forward(mapping, "saveSuccess");
     }
 
     public ActionForward delete(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         LOGGER.info("delete");
         LOGGER.info("{}", empService);
-        String id = request.getParameter("id");
-        empService.deleteByPrimaryKey(Integer.valueOf(id));
-        return mapping.findForward("saveSuccess");
+        String empno = request.getParameter("empno");
+        empService.deleteByPrimaryKey(Integer.valueOf(empno));
+        return MappingUtil.forward(mapping, "saveSuccess");
     }
 
     public ActionForward index(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -57,6 +55,28 @@ public class EmpAction extends BaseAppAction {
         });
         LOGGER.info("{}", empFormList);
         request.setAttribute("empList", empFormList);
-        return mapping.findForward("index");
+        return MappingUtil.forward(mapping, "index");
     }
+
+    public ActionForward add(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        LOGGER.info("add");
+        return MappingUtil.forward(mapping, "add");
+    }
+
+    public ActionForward edit(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        LOGGER.info("edit");
+        String empno = request.getParameter("empno");
+        EmpForm empForm = empService.selectByPrimaryKey(Integer.valueOf(empno));
+        LOGGER.info("{}", empForm);
+        request.setAttribute("emp", empForm);
+        return MappingUtil.forward(mapping, "edit");
+    }
+
+    public ActionForward update(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        LOGGER.info("update");
+        EmpForm record = (EmpForm) form;
+        empService.updateByPrimaryKey(record);
+        return MappingUtil.forward(mapping, "saveSuccess");
+    }
+
 }

@@ -39,7 +39,7 @@ public class EmpServiceImpl implements IEmpService<EmpForm> {
 
     @Override
     public EmpForm selectByPrimaryKey(Integer id) throws Exception {
-        return null;
+        return repositories.get(id);
     }
 
     @Override
@@ -58,6 +58,11 @@ public class EmpServiceImpl implements IEmpService<EmpForm> {
 
     @Override
     public int updateByPrimaryKey(EmpForm record) throws Exception {
+        Integer empno = record.getEmpno();
+        if (repositories.containsKey(empno)) {
+            repositories.put(empno, record);
+            return 1;
+        }
         return 0;
     }
 }

@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" isELIgnored="false" %>
+<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!doctype html>
 <html>
@@ -25,8 +25,8 @@
             <td>${emp.empno}</td>
             <td>${emp.ename}</td>
             <td>
-                <a href="empAction.do?method=delete&id=${emp.empno}">Del</a>&nbsp;&nbsp;
-                <a href="empAction.do?method=edit&id=${emp.empno}">Edit</a>
+                <a href="empAction.do?method=delete&empno=${emp.empno}">Del</a>&nbsp;&nbsp;
+                <a href="empAction.do?method=edit&empno=${emp.empno}">Edit</a>
             </td>
         </tr>
     </c:forEach>
