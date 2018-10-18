@@ -782,6 +782,14 @@ EmpAction.java
     </plug-in>
 ```
 
+action的type也要改变成为org.springframework.web.struts.DelegatingActionProxy
+
+```xml
+<action path="/empAction"
+    type="org.springframework.web.struts.DelegatingActionProxy"
+
+```
+
 这样就整合好spring了。
 
 ### 使用组件扫描配置和注解
