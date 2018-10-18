@@ -23,8 +23,8 @@ public class EmpAction extends BaseAppAction {
 
     private IEmpService<EmpForm> empService;
 
-    public EmpAction() {
-        this.empService = new EmpServiceImpl();
+    public void setEmpService(IEmpService<EmpForm> empService) {
+        this.empService = empService;
     }
 
     public ActionForward save(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {

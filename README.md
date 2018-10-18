@@ -723,3 +723,63 @@ public class EmpAction extends MappingDispatchAction {
       return mapping.findForward("index");
   }
 ```
+
+
+## 整合spring
+### 添加依赖
+``` xml
+    <spring.version>2.5.6</spring.version>
+
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring</artifactId>
+        <version>${spring.version}</version>
+    </dependency>
+    
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-webmvc-struts</artifactId>
+        <version>${spring.version}</version>
+    </dependency>
+```
+
+### 为需要注入的属性添加setter
+
+EmpAction.java
+
+``` java
+    private IEmpService<EmpForm> empService;
+
+    public void setEmpService(IEmpService<EmpForm> empService) {
+        this.empService = empService;
+    }
+```
+
+### 配置spring.xml
+
+新建文件WEB-INF/spring/spring.xml
+
+``` xml
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <bean name="empService" class="com.microandroid.moudle.emp.service.impl.EmpServiceImpl"/>
+    <bean name="/empAction" class="com.microandroid.moudle.emp.action.EmpAction">
+        <property name="empService" ref="empService"/>
+    </bean>
+</beans>
+```
+
+### 配置struts-config.xml
+
+``` xml
+    <!--配置spring 将spring委托给struts-->
+    <plug-in className="org.springframework.web.struts.ContextLoaderPlugIn">
+        <set-property property="contextConfigLocation" value="/WEB-INF/spring/spring.xml" />
+    </plug-in>
+```
+
+这样就整合好spring了。

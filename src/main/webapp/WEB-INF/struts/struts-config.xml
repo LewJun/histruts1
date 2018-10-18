@@ -12,7 +12,7 @@
         <!--parameter必须对应到EmpAction中的实际方法，缺点就是配置的action特别多，
         实际工作中，我认为为了减少配置，最好还是使用DispatchAction-->
         <action path="/empAction"
-                type="com.microandroid.moudle.emp.action.EmpAction"
+                type="org.springframework.web.struts.DelegatingActionProxy"
                 name="empForm"
                 parameter="method"
                 scope="request"
@@ -30,4 +30,9 @@
             <forward name="edit" path="/WEB-INF/views/emp/edit.jsp"/>
         </action>
     </action-mappings>
+
+    <!--配置spring 将spring委托给struts-->
+    <plug-in className="org.springframework.web.struts.ContextLoaderPlugIn">
+        <set-property property="contextConfigLocation" value="/WEB-INF/spring/spring.xml" />
+    </plug-in>
 </struts-config>
