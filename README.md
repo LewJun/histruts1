@@ -827,3 +827,21 @@ public class EmpAction extends BaseAppAction {
 @Service
 public class EmpServiceImpl implements IEmpService {}
 ```
+
+### 将spring的配置分配到不同的文件
+* spring-action.xml
+* spring-service.xml
+* spring-dao.xml
+spring.xml
+```xml
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+    <import resource="spring-action.xml"/>
+    <import resource="spring-service.xml"/>
+    <import resource="spring-dao.xml"/>
+</beans>
+```
+
+
