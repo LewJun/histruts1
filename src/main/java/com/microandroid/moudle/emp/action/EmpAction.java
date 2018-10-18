@@ -8,6 +8,8 @@ import com.microandroid.utils.MappingUtil;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -19,13 +21,11 @@ import java.util.List;
  * @author LewJun
  * @version v0.1 2018/09/30 14:07 LewJun Exp $$
  */
+@Controller("/empAction")
 public class EmpAction extends BaseAppAction {
 
+    @Autowired
     private IEmpService<EmpForm> empService;
-
-    public void setEmpService(IEmpService<EmpForm> empService) {
-        this.empService = empService;
-    }
 
     public ActionForward save(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         LOGGER.info("save");

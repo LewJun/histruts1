@@ -783,3 +783,47 @@ EmpAction.java
 ```
 
 这样就整合好spring了。
+
+### 使用组件扫描配置和注解
+
+如之前的spring.xml配置，将会很复杂。在spring2.5.6有component-scan能够自动扫描组件
+
+1. 配置spring.xml 去掉之前所有的bean配置
+
+``` xml
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-2.5.xsd">
+
+    <!--自动扫描Action-->
+    <context:component-scan base-package="com.microandroid.moudle.**.action"/>
+
+    <!--自动扫描Service-->
+    <context:component-scan base-package="com.microandroid.moudle.**.service"/>
+
+</beans>
+```
+
+2. 为xxxAction配置@Controller("/xxxAction")，为属性添加@Autowired
+
+```java
+@Controller("/empAction")
+public class EmpAction extends BaseAppAction {
+
+    @Autowired
+    private IEmpService<EmpForm> empService;
+    
+    // ...
+}
+```
+
+3. 为xxxServiceImpl添加@Service
+```java
+@Service
+public class EmpServiceImpl implements IEmpService {}
+```

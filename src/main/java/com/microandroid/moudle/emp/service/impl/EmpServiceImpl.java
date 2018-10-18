@@ -2,15 +2,17 @@ package com.microandroid.moudle.emp.service.impl;
 
 import com.microandroid.moudle.emp.bean.EmpForm;
 import com.microandroid.moudle.emp.service.IEmpService;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Service
 public class EmpServiceImpl implements IEmpService<EmpForm> {
 
-    private Map<Integer, EmpForm> repositories = new HashMap<>();
+    private Map<Integer, EmpForm> repositories = new HashMap<Integer, EmpForm>();
 
     @Override
     public int deleteByPrimaryKey(Integer id) throws Exception {
@@ -44,7 +46,7 @@ public class EmpServiceImpl implements IEmpService<EmpForm> {
 
     @Override
     public List<EmpForm> selectAll() throws Exception {
-        List<EmpForm> empForms = new ArrayList<>();
+        List<EmpForm> empForms = new ArrayList<EmpForm>();
         for (Map.Entry<Integer, EmpForm> me : repositories.entrySet()) {
             empForms.add(me.getValue());
         }
