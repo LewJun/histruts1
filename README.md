@@ -853,4 +853,659 @@ spring.xml
 </beans>
 ```
 
+## 整合mybatis
+
+说明：之前使用的spring是2.5.6，整合的过程中发现很多问题，不能整合，于是切换到3.1.2.RELEASE版本整合成功
+
+### 添加依赖
+
+```xml
+
+    <spring.version>3.1.2.RELEASE</spring.version>
+
+    <!--struts 配置 开始-->
+    <dependency>
+        <groupId>org.apache.struts</groupId>
+        <artifactId>struts-core</artifactId>
+        <version>${struts.version}</version>
+    </dependency>
+
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-struts</artifactId>
+        <version>${spring.version}</version>
+    </dependency>
+    <!--struts 配置 结束-->
+
+    <!--配置servlet 和 jstl 开始-->
+    <dependency>
+        <groupId>javax.servlet</groupId>
+        <artifactId>servlet-api</artifactId>
+        <version>2.5</version>
+        <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+        <groupId>javax.servlet</groupId>
+        <artifactId>jstl</artifactId>
+        <version>1.2</version>
+    </dependency>
+    <!--配置servlet 和 jstl 结束-->
+
+    <!--mybatis 配置 开始-->
+    <dependency>
+        <groupId>org.mybatis</groupId>
+        <artifactId>mybatis-spring</artifactId>
+        <version>1.2.0</version>
+    </dependency>
+
+    <dependency>
+        <groupId>org.mybatis</groupId>
+        <artifactId>mybatis</artifactId>
+        <version>3.2.8</version>
+    </dependency>
+    <!--mybatis 配置 结束-->
+
+    <!--数据库驱动 配置 开始-->
+    <dependency>
+        <groupId>com.oracle</groupId>
+        <artifactId>ojdbc14</artifactId>
+        <version>10.2.0.4.0</version>
+    </dependency>
+    <!--数据库驱动 配置 结束-->
+
+    <!--数据连接池 配置 开始-->
+    <dependency>
+        <groupId>com.alibaba</groupId>
+        <artifactId>druid</artifactId>
+        <version>1.1.10</version>
+    </dependency>
+    <!--数据连接池 配置 结束-->
+
+    <!--spring 配置 开始-->
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-tx</artifactId>
+        <version>${spring.version}</version>
+    </dependency>
+
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-beans</artifactId>
+        <version>${spring.version}</version>
+    </dependency>
+
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-aop</artifactId>
+        <version>${spring.version}</version>
+    </dependency>
+
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-jdbc</artifactId>
+        <version>${spring.version}</version>
+    </dependency>
+    <!--spring 配置 结束-->
+```
+
+### 配置spring-dao.xml
+
+```xml
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+
+    <!--第一步：配置dataSource-->
+    <!-- **************** druid 监控连接池配置 ***************** -->
+    <!-- 阿里 druid 数据库连接池 -->
+    <bean id="druidDataSource" class="com.alibaba.druid.pool.DruidDataSource" destroy-method="close">
+        <!-- 数据库基本信息配置 -->
+        <property name="url" value="${jdbc.url}"/>
+        <property name="username" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+        <property name="driverClassName" value="${jdbc.driverClassName}"/>
+        <property name="filters" value="${jdbc.filters}"/>
+        <!-- 最大并发连接数 -->
+        <property name="maxActive" value="${jdbc.maxActive}"/>
+        <!-- 初始化连接数量 -->
+        <property name="initialSize" value="${jdbc.initialSize}"/>
+        <!-- 配置获取连接等待超时的时间 -->
+        <property name="maxWait" value="${jdbc.maxWait}"/>
+        <!-- 最小空闲连接数 -->
+        <property name="minIdle" value="${jdbc.minIdle}"/>
+        <!-- 配置间隔多久才进行一次检测,检测需要关闭的空闲连接,单位是毫秒 -->
+        <property name="timeBetweenEvictionRunsMillis" value="${jdbc.timeBetweenEvictionRunsMillis}"/>
+        <!-- 配置一个连接在池中最小生存的时间,单位是毫秒 -->
+        <property name="minEvictableIdleTimeMillis" value="${jdbc.minEvictableIdleTimeMillis}"/>
+        <property name="validationQuery" value="${jdbc.validationQuery}"/>
+        <property name="testWhileIdle" value="${jdbc.testWhileIdle}"/>
+        <property name="testOnBorrow" value="${jdbc.testOnBorrow}"/>
+        <property name="testOnReturn" value="${jdbc.testOnReturn}"/>
+        <property name="maxOpenPreparedStatements" value="${jdbc.maxOpenPreparedStatements}"/>
+        <!-- 打开 removeAbandoned 功能 -->
+        <property name="removeAbandoned" value="${jdbc.removeAbandoned}"/>
+        <!-- 1800 秒,也就是 30 分钟 -->
+        <property name="removeAbandonedTimeout" value="${jdbc.removeAbandonedTimeout}"/>
+        <!-- 关闭 abanded 连接时输出错误日志 -->
+        <property name="logAbandoned" value="${jdbc.logAbandoned}"/>
+    </bean>
+    <!-- 第二步：配置sessionFactory -->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="druidDataSource"/>
+        <property name="mapperLocations" value="classpath:mappers/**/*.xml"/>
+    </bean>
+    <!-- 第三步：配置DAO，这里使用 MapperScannerConfigurer扫描指定规则下的接口，根据Mapper自动生成DAO的实现 -->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.microandroid.moudle.**.mapper"/>
+        <!-- 		<property name="annotationClass" value="org.springframework.stereotype.Repository" /> -->
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
+    </bean>
+    <!-- 第四步：配置spring事务 -->
+    <bean id="transactionManager"
+          class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="druidDataSource"/>
+    </bean>
+    <!-- 第五步：基于注解的方式使用事务管理 -->
+    <tx:annotation-driven proxy-target-class="true"/>
+</beans>
+
+```
+
+### 配置jdbc.properties
+新增文件conf/jdbc.properties
+```properties
+jdbc.type=oracle
+jdbc.driverClassName=${jdbc.driverClassName}
+jdbc.url=${jdbc.url}
+jdbc.username=${jdbc.username}
+jdbc.password=${jdbc.password}
+jdbc.filters=stat
+jdbc.maxActive=20
+jdbc.initialSize=1
+jdbc.maxWait=60000
+jdbc.minIdle=10
+jdbc.maxIdle=15
+jdbc.timeBetweenEvictionRunsMillis=60000
+jdbc.minEvictableIdleTimeMillis=300000
+jdbc.validationQuery=SELECT 'x' FROM DUAL
+jdbc.testWhileIdle=true
+jdbc.testOnBorrow=false
+jdbc.testOnReturn=false
+jdbc.maxOpenPreparedStatements=20
+jdbc.removeAbandoned=true
+jdbc.removeAbandonedTimeout=1800
+jdbc.logAbandoned=true
+```
+
+### 配置env/*.properties
+```properties
+jdbc.driverClassName=oracle.jdbc.driver.OracleDriver
+jdbc.url=jdbc\:oracle\:thin\:@0.0.0.0\:1521\:orcl
+jdbc.username=scott
+jdbc.password=scott
+#\u5B9A\u4E49\u521D\u59CB\u8FDE\u63A5\u6570
+jdbc.initialSize=0
+#\u5B9A\u4E49\u6700\u5927\u8FDE\u63A5\u6570
+jdbc.maxActive=20
+#\u5B9A\u4E49\u6700\u5927\u7A7A\u95F2
+jdbc.maxIdle=20
+#\u5B9A\u4E49\u6700\u5C0F\u7A7A\u95F2
+jdbc.minIdle=1
+#\u5B9A\u4E49\u6700\u957F\u7B49\u5F85\u65F6\u95F4
+jdbc.maxWait=60000
+
+```
+
+### spring.xml引入资源文件
+```xml
+<!-- 引入配置文件 -->
+    <context:property-placeholder location="classpath:conf/*.properties"/>
+```
+
+### EmpMapper.xml
+```xml
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.microandroid.moudle.emp.mapper.IEmpMapper">
+    <resultMap id="BaseResultMap" type="com.microandroid.moudle.emp.dto.Emp">
+        <id column="EMPNO" property="empno" jdbcType="INTEGER"/>
+        <result column="ENAME" property="ename" jdbcType="VARCHAR"/>
+        <result column="JOB" property="job" jdbcType="VARCHAR"/>
+        <result column="MGR" property="mgr" jdbcType="INTEGER"/>
+        <result column="HIREDATE" property="hiredate" jdbcType="DATE"/>
+        <result column="DEPTNO" property="deptno" jdbcType="INTEGER"/>
+        <collection property="empList" ofType="com.microandroid.moudle.emp.dto.Emp">
+            <result column="ENAME1" property="ename" jdbcType="VARCHAR"/>
+            <result column="JOB1" property="job" jdbcType="VARCHAR"/>
+            <result column="MGR1" property="mgr" jdbcType="INTEGER"/>
+            <result column="HIREDATE1" property="hiredate" jdbcType="DATE"/>
+            <result column="DEPTNO1" property="deptno" jdbcType="INTEGER"/>
+        </collection>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        EMPNO, ENAME, JOB, MGR, HIREDATE, DEPTNO
+    </sql>
+
+    <sql id="queryAll">
+        select
+        <include refid="Base_Column_List"/>
+        from emp
+    </sql>
+
+    <!-- 插入一个对象到数据库
+    empno字段自增长
+    -->
+    <insert id="insert" parameterType="com.microandroid.moudle.emp.dto.Emp">
+        insert into emp (EMPNO, ENAME, JOB, MGR, HIREDATE, DEPTNO)
+        values (#{empno,jdbcType=NUMERIC},
+                #{ename,jdbcType=VARCHAR},
+                #{job,jdbcType=VARCHAR},
+                #{mgr,jdbcType=NUMERIC},
+                #{hiredate,jdbcType=DATE},
+                #{deptno,jdbcType=NUMERIC})
+    </insert>
+    <!-- 批量插入数据 -->
+    <insert id="inserts" parameterType="list">
+        insert into emp (EMPNO,ENAME, JOB, MGR, HIREDATE, DEPTNO)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.empno},#{item.ename}, #{item.job}, #{item.mgr}, #{item.hiredate}, #{item.deptno})
+        </foreach>
+    </insert>
+    <insert id="insertSelective" parameterType="com.microandroid.moudle.emp.dto.Emp">
+        insert into emp
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="empno != null">
+                EMPNO,
+            </if>
+            <if test="ename != null">
+                ENAME,
+            </if>
+            <if test="job != null">
+                JOB,
+            </if>
+            <if test="mgr != null">
+                MGR,
+            </if>
+            <if test="hiredate != null">
+                HIREDATE,
+            </if>
+            <if test="deptno != null">
+                DEPTNO,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="empno != null">
+                #{empno,jdbcType=NUMERIC},
+            </if>
+            <if test="ename != null">
+                #{ename,jdbcType=VARCHAR},
+            </if>
+            <if test="job != null">
+                #{job,jdbcType=VARCHAR},
+            </if>
+            <if test="mgr != null">
+                #{mgr,jdbcType=NUMERIC},
+            </if>
+            <if test="hiredate != null">
+                #{hiredate,jdbcType=DATE},
+            </if>
+            <if test="deptno != null">
+                #{deptno,jdbcType=NUMERIC}
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.microandroid.moudle.emp.dto.Emp">
+        update emp
+        <set>
+            <if test="ename != null">
+                ENAME = #{ename,jdbcType=VARCHAR},
+            </if>
+            <if test="job != null">
+                JOB = #{job,jdbcType=VARCHAR},
+            </if>
+            <if test="mgr != null">
+                MGR = #{mgr,jdbcType=NUMERIC},
+            </if>
+            <if test="hiredate != null">
+                HIREDATE = #{hiredate,jdbcType=DATE},
+            </if>
+            <if test="deptno != null">
+                DEPTNO = #{deptno,jdbcType=NUMERIC}
+            </if>
+        </set>
+        where EMPNO = #{empno}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.microandroid.moudle.emp.dto.Emp">
+        update emp
+        set ENAME    = #{ename,jdbcType=VARCHAR},
+            JOB      = #{job,jdbcType=VARCHAR},
+            MGR      = #{mgr,jdbcType=NUMERIC},
+            HIREDATE = #{hiredate,jdbcType=DATE},
+            DEPTNO   = #{deptno,jdbcType=NUMERIC}
+        where EMPNO = #{empno}
+    </update>
+    <!-- 根据pk删除 -->
+    <delete id="deleteByPrimaryKey" parameterType="object">
+        delete
+        from emp
+        where empno = #{pk}
+    </delete>
+
+    <!-- 根据主键查询 -->
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap"
+            parameterType="java.lang.Integer">
+        <include refid="queryAll"/>
+        where EMPNO = #{empno}
+    </select>
+
+    <!-- 查询所有记录 -->
+    <select id="selectAll" resultMap="BaseResultMap">
+        <include refid="queryAll"/>
+    </select>
+
+    <!-- 查询员工及其下属员工 -->
+    <select id="selectEmpWithSubEmpByPrimaryKey" parameterType="object"
+            resultMap="BaseResultMap">
+        select e1.*, e3.ENAME as ENAME1,e3.JOB as JOB1,e3.MGR as
+        MGR1,e3.HIREDATE as HIREDATE1,e3.DEPTNO as DEPTNO1
+        from emp e1 LEFT JOIN emp e3 ON e1.EMPNO=e3.MGR
+        where EXISTS (
+        select * from emp e2 where e1.EMPNO = e2.mgr
+        )
+        <where>
+            <if test=" _parameters != null and _parameter != '' ">
+                AND e1.EMPNO=#{_parameter}
+            </if>
+        </where>
+        ORDER BY e1.EMPNO
+    </select>
+</mapper>
+```
+
+### IEmpService
+```java
+package com.microandroid.moudle.emp.service;
+
+import com.microandroid.moudle.emp.dto.Emp;
+
+import java.io.Serializable;
+import java.util.List;
+
+public interface IEmpService<T extends Emp> {
+
+    /**
+     * 根据pk删除
+     *
+     * @param pk
+     * @return effect rows
+     */
+    int deleteByPrimaryKey(Serializable pk);
+
+    /**
+     * 插入一个对象到数据库，能得到主键值
+     *
+     * @param record 插入的对象
+     * @return effect rows
+     */
+    int insert(Emp record);
+
+    /**
+     * 批量插入数据，但是不能得到主键值
+     *
+     * @param ts 批量插入的对象
+     * @return effect rows
+     */
+    int inserts(List<Emp> ts);
+
+    /**
+     * 有选择的插入（插入不为空的字段）
+     *
+     * @param record 插入的对象
+     * @return effect rows
+     */
+    int insertSelective(Emp record);
+
+    /**
+     * 更新
+     *
+     * @param record
+     * @return effect rows
+     */
+    int updateByPrimaryKey(Emp record);
+
+    /**
+     * 有选择的更新
+     *
+     * @param record
+     * @return effect rows
+     */
+    int updateByPrimaryKeySelective(Emp record);
+
+    /**
+     * 查询所有
+     *
+     * @return Emp
+     */
+    List<Emp> selectAll();
+
+    /**
+     * 根据主键查询数据
+     *
+     * @param pk 主键
+     * @return Emp
+     */
+    Emp selectByPrimaryKey(Serializable pk);
+
+    /**
+     * 查询员工及其下属员工
+     *
+     * @param pk
+     * @return
+     */
+    List<Emp> selectEmpWithSubEmpByPrimaryKey(Serializable pk);
+}
+
+```
+
+### EmpServiceImpl
+```java
+package com.microandroid.moudle.emp.service.impl;
+
+import com.microandroid.moudle.emp.dto.Emp;
+import com.microandroid.moudle.emp.mapper.IEmpMapper;
+import com.microandroid.moudle.emp.service.IEmpService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.io.Serializable;
+import java.util.List;
+
+@Service
+public class EmpServiceImpl implements IEmpService<Emp> {
+
+    @Autowired
+    IEmpMapper empMapper;
+
+    @Override
+    public int insert(Emp emp) {
+        return empMapper.insert(emp);
+    }
+
+    @Override
+    public int deleteByPrimaryKey(Serializable pk) {
+        return empMapper.deleteByPrimaryKey(pk);
+    }
+
+    @Override
+    public int inserts(List<Emp> ts) {
+        return empMapper.inserts(ts);
+    }
+
+    @Override
+    public int insertSelective(Emp record) {
+        return empMapper.insertSelective(record);
+    }
+
+    @Override
+    public Emp selectByPrimaryKey(Serializable pk) {
+        return empMapper.selectByPrimaryKey(pk);
+    }
+
+    @Override
+    public List<Emp> selectAll() {
+        return empMapper.selectAll();
+    }
+
+    @Override
+    public int updateByPrimaryKey(Emp record) {
+        return empMapper.updateByPrimaryKey(record);
+    }
+
+    @Override
+    public int updateByPrimaryKeySelective(Emp record) {
+        return empMapper.updateByPrimaryKeySelective(record);
+    }
+
+    @Override
+    public List<Emp> selectEmpWithSubEmpByPrimaryKey(Serializable pk) {
+        return empMapper.selectEmpWithSubEmpByPrimaryKey(pk);
+    }
+}
+
+```
+
+### IEmpMapper
+```java
+package com.microandroid.moudle.emp.mapper;
+
+import com.microandroid.moudle.emp.dto.Emp;
+import org.springframework.stereotype.Repository;
+
+import java.io.Serializable;
+import java.util.List;
+
+@Repository
+public interface IEmpMapper {
+
+    /**
+     * 根据pk删除
+     *
+     * @param pk
+     * @return effect rows
+     */
+    int deleteByPrimaryKey(Serializable pk);
+
+    /**
+     * 插入一个对象到数据库，能得到主键值
+     *
+     * @param record 插入的对象
+     * @return effect rows
+     */
+    int insert(Emp record);
+
+    /**
+     * 批量插入数据，但是不能得到主键值
+     *
+     * @param ts 批量插入的对象
+     * @return effect rows
+     */
+    int inserts(List<Emp> ts);
+
+    /**
+     * 有选择的插入（插入不为空的字段）
+     *
+     * @param record 插入的对象
+     * @return effect rows
+     */
+    int insertSelective(Emp record);
+
+    /**
+     * 更新
+     *
+     * @param record
+     * @return effect rows
+     */
+    int updateByPrimaryKey(Emp record);
+
+    /**
+     * 有选择的更新
+     *
+     * @param record
+     * @return effect rows
+     */
+    int updateByPrimaryKeySelective(Emp record);
+
+    /**
+     * 查询所有
+     *
+     * @return Emp
+     */
+    List<Emp> selectAll();
+
+    /**
+     * 根据主键查询数据
+     *
+     * @param pk 主键
+     * @return Emp
+     */
+    Emp selectByPrimaryKey(Serializable pk);
+
+    /**
+     * 查询员工及其下属员工
+     *
+     * @param pk
+     * @return
+     */
+    List<Emp> selectEmpWithSubEmpByPrimaryKey(Serializable pk);
+}
+
+```
+
+### Emp
+```java
+package com.microandroid.moudle.emp.dto;
+
+import java.util.Date;
+import java.util.List;
+
+/**
+ * @author LewJun
+ * @version v0.1 2018/10/18 19:34 LewJun Exp $$
+ */
+public class Emp {
+    private Integer empno;
+
+    private String ename;
+
+    private String job;
+
+    private Integer mgr;
+
+    private Date hiredate;
+
+    private Integer deptno;
+
+    private List<Emp> empList;
+
+    public Integer getEmpno() {
+        return empno;
+    }
+
+    // setter & getter
+
+    @Override
+    public String toString() {
+        return "Emp [empno=" + empno + ", ename=" + ename + ", job=" + job + ", mgr=" + mgr
+                + ", hiredate=" + hiredate + ", deptno=" + deptno + ", empList=" + empList + "]";
+    }
+}
+
+```
 

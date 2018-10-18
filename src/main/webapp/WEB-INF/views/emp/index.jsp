@@ -20,16 +20,18 @@
         <th>Ename</th>
         <th>Opr</th>
     </tr>
-    <c:forEach items="${empList}" var="emp">
-        <tr>
-            <td>${emp.empno}</td>
-            <td>${emp.ename}</td>
-            <td>
-                <a href="empAction.do?method=delete&empno=${emp.empno}">Del</a>&nbsp;&nbsp;
-                <a href="empAction.do?method=edit&empno=${emp.empno}">Edit</a>
-            </td>
-        </tr>
-    </c:forEach>
+    <c:if test="${empList != null}">
+        <c:forEach items="${empList}" var="emp">
+            <tr>
+                <td>${emp.empno}</td>
+                <td>${emp.ename}</td>
+                <td>
+                    <a href="empAction.do?method=delete&empno=${emp.empno}">Del</a>&nbsp;&nbsp;
+                    <a href="empAction.do?method=edit&empno=${emp.empno}">Edit</a>
+                </td>
+            </tr>
+        </c:forEach>
+    </c:if>
     </tbody>
 </table>
 <script src="../../../static/plugins/w3/w3.js"></script>

@@ -1,24 +1,80 @@
 package com.microandroid.moudle.emp.service;
 
-import com.microandroid.moudle.emp.bean.EmpForm;
+import com.microandroid.moudle.emp.dto.Emp;
 
+import java.io.Serializable;
 import java.util.List;
 
-public interface IEmpService<T extends EmpForm> {
+public interface IEmpService<T extends Emp> {
 
-    int deleteByPrimaryKey(Integer id) throws Exception;
+    /**
+     * 根据pk删除
+     *
+     * @param pk
+     * @return effect rows
+     */
+    int deleteByPrimaryKey(Serializable pk);
 
-    int inserts(List<T> ts) throws Exception;
+    /**
+     * 插入一个对象到数据库，能得到主键值
+     *
+     * @param record 插入的对象
+     * @return effect rows
+     */
+    int insert(Emp record);
 
-    int insert(T record) throws Exception;
+    /**
+     * 批量插入数据，但是不能得到主键值
+     *
+     * @param ts 批量插入的对象
+     * @return effect rows
+     */
+    int inserts(List<Emp> ts);
 
-    int insertSelective(T record) throws Exception;
+    /**
+     * 有选择的插入（插入不为空的字段）
+     *
+     * @param record 插入的对象
+     * @return effect rows
+     */
+    int insertSelective(Emp record);
 
-    T selectByPrimaryKey(Integer id) throws Exception;
+    /**
+     * 更新
+     *
+     * @param record
+     * @return effect rows
+     */
+    int updateByPrimaryKey(Emp record);
 
-    List<T> selectAll() throws Exception;
+    /**
+     * 有选择的更新
+     *
+     * @param record
+     * @return effect rows
+     */
+    int updateByPrimaryKeySelective(Emp record);
 
-    int updateByPrimaryKeySelective(T record) throws Exception;
+    /**
+     * 查询所有
+     *
+     * @return Emp
+     */
+    List<Emp> selectAll();
 
-    int updateByPrimaryKey(T record) throws Exception;
+    /**
+     * 根据主键查询数据
+     *
+     * @param pk 主键
+     * @return Emp
+     */
+    Emp selectByPrimaryKey(Serializable pk);
+
+    /**
+     * 查询员工及其下属员工
+     *
+     * @param pk
+     * @return
+     */
+    List<Emp> selectEmpWithSubEmpByPrimaryKey(Serializable pk);
 }

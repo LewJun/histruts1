@@ -2,19 +2,18 @@ package com.microandroid.moudle.emp.action;
 
 import com.microandroid.base.BaseAppAction;
 import com.microandroid.moudle.emp.bean.EmpForm;
+import com.microandroid.moudle.emp.dto.Emp;
 import com.microandroid.moudle.emp.service.IEmpService;
-import com.microandroid.moudle.emp.service.impl.EmpServiceImpl;
 import com.microandroid.utils.MappingUtil;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -25,13 +24,15 @@ import java.util.List;
 public class EmpAction extends BaseAppAction {
 
     @Autowired
-    private IEmpService<EmpForm> empService;
+    private IEmpService<Emp> empService;
 
     public ActionForward save(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         LOGGER.info("save");
         LOGGER.info("{}", empService);
         EmpForm record = (EmpForm) form;
-        empService.insert(record);
+        Emp emp = new Emp();
+        BeanUtils.copyProperties(record, emp);
+        empService.insert(emp);
         return MappingUtil.forward(mapping, "saveSuccess");
     }
 
@@ -46,15 +47,9 @@ public class EmpAction extends BaseAppAction {
     public ActionForward index(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         LOGGER.info("index");
         LOGGER.info("{}", empService);
-        List<EmpForm> empFormList = empService.selectAll();
-        Collections.sort(empFormList, new Comparator<EmpForm>() {
-            @Override
-            public int compare(EmpForm o1, EmpForm o2) {
-                return o1.getEmpno() - o2.getEmpno();
-            }
-        });
-        LOGGER.info("{}", empFormList);
-        request.setAttribute("empList", empFormList);
+        List<Emp> empList = empService.selectAll();
+        LOGGER.info("{}", empList);
+        request.setAttribute("empList", empList);
         return MappingUtil.forward(mapping, "index");
     }
 
@@ -66,7 +61,7 @@ public class EmpAction extends BaseAppAction {
     public ActionForward edit(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         LOGGER.info("edit");
         String empno = request.getParameter("empno");
-        EmpForm empForm = empService.selectByPrimaryKey(Integer.valueOf(empno));
+        Emp empForm = empService.selectByPrimaryKey(Integer.valueOf(empno));
         LOGGER.info("{}", empForm);
         request.setAttribute("emp", empForm);
         return MappingUtil.forward(mapping, "edit");
@@ -75,7 +70,9 @@ public class EmpAction extends BaseAppAction {
     public ActionForward update(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         LOGGER.info("update");
         EmpForm record = (EmpForm) form;
-        empService.updateByPrimaryKey(record);
+        Emp emp = new Emp();
+        BeanUtils.copyProperties(record, emp);
+        empService.updateByPrimaryKey(emp);
         return MappingUtil.forward(mapping, "saveSuccess");
     }
 

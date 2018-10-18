@@ -1,70 +1,62 @@
 package com.microandroid.moudle.emp.service.impl;
 
-import com.microandroid.moudle.emp.bean.EmpForm;
+import com.microandroid.moudle.emp.dto.Emp;
+import com.microandroid.moudle.emp.mapper.IEmpMapper;
 import com.microandroid.moudle.emp.service.IEmpService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.io.Serializable;
 import java.util.List;
-import java.util.Map;
 
 @Service
-public class EmpServiceImpl implements IEmpService<EmpForm> {
+public class EmpServiceImpl implements IEmpService<Emp> {
 
-    private Map<Integer, EmpForm> repositories = new HashMap<Integer, EmpForm>();
+    @Autowired
+    IEmpMapper empMapper;
 
     @Override
-    public int deleteByPrimaryKey(Integer id) throws Exception {
-        repositories.remove(id);
-        return repositories.size();
+    public int insert(Emp emp) {
+        return empMapper.insert(emp);
     }
 
     @Override
-    public int inserts(List<EmpForm> empForms) throws Exception {
-        for (EmpForm empForm : empForms) {
-            repositories.put(empForm.getEmpno(), empForm);
-        }
-        return repositories.size();
+    public int deleteByPrimaryKey(Serializable pk) {
+        return empMapper.deleteByPrimaryKey(pk);
     }
 
     @Override
-    public int insert(EmpForm record) throws Exception {
-        repositories.put(record.getEmpno(), record);
-        return repositories.size();
+    public int inserts(List<Emp> ts) {
+        return empMapper.inserts(ts);
     }
 
     @Override
-    public int insertSelective(EmpForm record) throws Exception {
-        return 0;
+    public int insertSelective(Emp record) {
+        return empMapper.insertSelective(record);
     }
 
     @Override
-    public EmpForm selectByPrimaryKey(Integer id) throws Exception {
-        return repositories.get(id);
+    public Emp selectByPrimaryKey(Serializable pk) {
+        return empMapper.selectByPrimaryKey(pk);
     }
 
     @Override
-    public List<EmpForm> selectAll() throws Exception {
-        List<EmpForm> empForms = new ArrayList<EmpForm>();
-        for (Map.Entry<Integer, EmpForm> me : repositories.entrySet()) {
-            empForms.add(me.getValue());
-        }
-        return empForms;
+    public List<Emp> selectAll() {
+        return empMapper.selectAll();
     }
 
     @Override
-    public int updateByPrimaryKeySelective(EmpForm record) throws Exception {
-        return 0;
+    public int updateByPrimaryKey(Emp record) {
+        return empMapper.updateByPrimaryKey(record);
     }
 
     @Override
-    public int updateByPrimaryKey(EmpForm record) throws Exception {
-        Integer empno = record.getEmpno();
-        if (repositories.containsKey(empno)) {
-            repositories.put(empno, record);
-            return 1;
-        }
-        return 0;
+    public int updateByPrimaryKeySelective(Emp record) {
+        return empMapper.updateByPrimaryKeySelective(record);
+    }
+
+    @Override
+    public List<Emp> selectEmpWithSubEmpByPrimaryKey(Serializable pk) {
+        return empMapper.selectEmpWithSubEmpByPrimaryKey(pk);
     }
 }
