@@ -1509,3 +1509,6 @@ public class Emp {
 
 ```
 
+### 去掉struts依赖
+在spring-struts中已经包括了struts:struts:1.2.9和spring-webmvc，
+所以在struts集成spring的时候可以去掉struts的dependency。

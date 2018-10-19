@@ -29,9 +29,9 @@ public class EmpAction extends BaseAppAction {
     public ActionForward save(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         LOGGER.info("save");
         LOGGER.info("{}", empService);
-        EmpForm record = (EmpForm) form;
+        EmpForm empForm = (EmpForm) form;
         Emp emp = new Emp();
-        BeanUtils.copyProperties(record, emp);
+        BeanUtils.copyProperties(empForm, emp);
         empService.insert(emp);
         return MappingUtil.forward(mapping, "saveSuccess");
     }
@@ -61,17 +61,17 @@ public class EmpAction extends BaseAppAction {
     public ActionForward edit(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         LOGGER.info("edit");
         String empno = request.getParameter("empno");
-        Emp empForm = empService.selectByPrimaryKey(Integer.valueOf(empno));
-        LOGGER.info("{}", empForm);
-        request.setAttribute("emp", empForm);
+        Emp emp = empService.selectByPrimaryKey(Integer.valueOf(empno));
+        LOGGER.info("{}", emp);
+        request.setAttribute("emp", emp);
         return MappingUtil.forward(mapping, "edit");
     }
 
     public ActionForward update(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         LOGGER.info("update");
-        EmpForm record = (EmpForm) form;
+        EmpForm empForm = (EmpForm) form;
         Emp emp = new Emp();
-        BeanUtils.copyProperties(record, emp);
+        BeanUtils.copyProperties(empForm, emp);
         empService.updateByPrimaryKey(emp);
         return MappingUtil.forward(mapping, "saveSuccess");
     }
