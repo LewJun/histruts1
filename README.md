@@ -1512,3 +1512,36 @@ public class Emp {
 ### 去掉struts依赖
 在spring-struts中已经包括了struts:struts:1.2.9和spring-webmvc，
 所以在struts集成spring的时候可以去掉struts的dependency。
+
+### 使用lombok简化pojo
+* 安装插件
+
+[github教程](https://github.com/mplushnikov/lombok-intellij-plugin)
+
+* 添加依赖
+
+```xml
+<dependency>
+    <groupId>org.projectlombok</groupId>
+    <artifactId>lombok</artifactId>
+    <version>1.16.6</version>
+    <scope>provided</scope>
+</dependency>
+```
+
+* 使用
+
+常见的使用有在类上添加`@Getter`，`@Setter`，`@ToString` 。。。
+
+* 常见问题
+    - 找不到属性
+        
+        `Settings` -> `Build, Execution, Deployment` -> `Compiler` -> `Annotation Processors` Click `Enable Annotation 
+        Processing` -> `checked`
+
+        可能是编译插件版本过低，设置编译插件版本
+        ```xml
+            <plugin>
+              <artifactId>maven-compiler-plugin</artifactId>
+              <version>3.3</version>
+        ```
