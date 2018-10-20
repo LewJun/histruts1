@@ -193,6 +193,7 @@
     </profiles>
     <build>
         <finalName>histruts1</finalName>
+        <defaultGoal>compile</defaultGoal>
 
         <plugins>
             <!--tomcat7插件-->
