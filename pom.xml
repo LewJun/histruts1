@@ -73,6 +73,13 @@
             <artifactId>ojdbc14</artifactId>
             <version>10.2.0.4.0</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.xerial</groupId>
+            <artifactId>sqlite-jdbc</artifactId>
+            <version>3.8.11.2</version>
+        </dependency>
+
         <!--数据库驱动 配置 结束-->
 
         <!--数据连接池 配置 开始-->
