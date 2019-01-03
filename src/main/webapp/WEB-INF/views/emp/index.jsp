@@ -26,7 +26,7 @@
                 <td>${emp.empno}</td>
                 <td>${emp.ename}</td>
                 <td>
-                    <a href="empAction.do?method=delete&empno=${emp.empno}">Del</a>&nbsp;&nbsp;
+                    <a href="empAction.do?method=delete&empno=${emp.empno}">Del</a>
                     <a href="empAction.do?method=edit&empno=${emp.empno}">Edit</a>
                 </td>
             </tr>
