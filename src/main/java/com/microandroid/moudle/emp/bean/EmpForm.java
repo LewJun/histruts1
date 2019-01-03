@@ -2,8 +2,6 @@ package com.microandroid.moudle.emp.bean;
 
 import org.apache.struts.action.ActionForm;
 
-import java.util.Date;
-
 /**
  * @author LewJun
  * @version v0.1 2018/09/30 14:07 LewJun Exp $$
@@ -19,7 +17,7 @@ public class EmpForm extends ActionForm {
 
     private Integer mgr;
 
-    private Date hiredate;
+    private String hiredate;
 
     private Integer deptno;
 
@@ -55,11 +53,11 @@ public class EmpForm extends ActionForm {
         this.mgr = mgr;
     }
 
-    public Date getHiredate() {
+    public String getHiredate() {
         return hiredate;
     }
 
-    public void setHiredate(Date hiredate) {
+    public void setHiredate(String hiredate) {
         this.hiredate = hiredate;
     }
 
@@ -69,5 +67,17 @@ public class EmpForm extends ActionForm {
 
     public void setDeptno(Integer deptno) {
         this.deptno = deptno;
+    }
+
+    @Override
+    public String toString() {
+        return "EmpForm{" +
+                "empno=" + empno +
+                ", ename='" + ename + '\'' +
+                ", job='" + job + '\'' +
+                ", mgr=" + mgr +
+                ", hiredate='" + hiredate + '\'' +
+                ", deptno=" + deptno +
+                '}';
     }
 }

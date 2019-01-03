@@ -1,6 +1,5 @@
 package com.microandroid.moudle.emp.dto;
 
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -16,7 +15,7 @@ public class Emp {
 
     private Integer mgr;
 
-    private Date hiredate;
+    private String hiredate;
 
     private Integer deptno;
 
@@ -54,11 +53,11 @@ public class Emp {
         this.mgr = mgr;
     }
 
-    public Date getHiredate() {
+    public String getHiredate() {
         return hiredate;
     }
 
-    public void setHiredate(Date hiredate) {
+    public void setHiredate(String hiredate) {
         this.hiredate = hiredate;
     }
 
@@ -76,5 +75,18 @@ public class Emp {
 
     public void setEmpList(List<Emp> empList) {
         this.empList = empList;
+    }
+
+    @Override
+    public String toString() {
+        return "Emp{" +
+                "empno=" + empno +
+                ", ename='" + ename + '\'' +
+                ", job='" + job + '\'' +
+                ", mgr=" + mgr +
+                ", hiredate='" + hiredate + '\'' +
+                ", deptno=" + deptno +
+                ", empList=" + empList +
+                '}';
     }
 }
