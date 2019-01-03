@@ -200,6 +200,7 @@
     </profiles>
     <build>
         <finalName>histruts1</finalName>
+        <defaultGoal>compile</defaultGoal>
 
         <plugins>
             <!--tomcat7插件-->
@@ -266,4 +267,16 @@
         </filters>
 
     </build>
+
+    <!--mvn clean deploy -Pdev 打包后自动上传到私服 -->
+    <distributionManagement>
+        <repository>
+            <id>releases</id><!--这个ID需要与你的release仓库的Repository ID一致-->
+            <url>http://127.0.0.1:8091/nexus/content/repositories/releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>snapshots</id><!--这个ID需要与你的snapshots仓库的Repository ID一致-->
+            <url>http://127.0.0.1:8091/nexus/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
 </project>
