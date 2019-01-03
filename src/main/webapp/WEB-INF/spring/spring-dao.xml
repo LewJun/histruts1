@@ -32,7 +32,8 @@
         <property name="testWhileIdle" value="${jdbc.testWhileIdle}"/>
         <property name="testOnBorrow" value="${jdbc.testOnBorrow}"/>
         <property name="testOnReturn" value="${jdbc.testOnReturn}"/>
-        <property name="maxOpenPreparedStatements" value="${jdbc.maxOpenPreparedStatements}"/>
+        <!--注释maxOpenPreparedStatements为了解决 org.sqlite.jdbc3.JDBC3ResultSet.getFetchDirection-->
+        <!--<property name="maxOpenPreparedStatements" value="${jdbc.maxOpenPreparedStatements}"/>-->
         <!-- 打开 removeAbandoned 功能 -->
         <property name="removeAbandoned" value="${jdbc.removeAbandoned}"/>
         <!-- 1800 秒,也就是 30 分钟 -->
