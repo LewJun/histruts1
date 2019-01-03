@@ -6,13 +6,13 @@
         <result column="ENAME" property="ename" jdbcType="VARCHAR"/>
         <result column="JOB" property="job" jdbcType="VARCHAR"/>
         <result column="MGR" property="mgr" jdbcType="INTEGER"/>
-        <result column="HIREDATE" property="hiredate" jdbcType="DATE"/>
+        <result column="HIREDATE" property="hiredate" jdbcType="VARCHAR"/>
         <result column="DEPTNO" property="deptno" jdbcType="INTEGER"/>
         <collection property="empList" ofType="com.microandroid.moudle.emp.dto.Emp">
             <result column="ENAME1" property="ename" jdbcType="VARCHAR"/>
             <result column="JOB1" property="job" jdbcType="VARCHAR"/>
             <result column="MGR1" property="mgr" jdbcType="INTEGER"/>
-            <result column="HIREDATE1" property="hiredate" jdbcType="DATE"/>
+            <result column="HIREDATE1" property="hiredate" jdbcType="VARCHAR"/>
             <result column="DEPTNO1" property="deptno" jdbcType="INTEGER"/>
         </collection>
     </resultMap>
@@ -36,7 +36,7 @@
                 #{ename,jdbcType=VARCHAR},
                 #{job,jdbcType=VARCHAR},
                 #{mgr,jdbcType=NUMERIC},
-                #{hiredate,jdbcType=DATE},
+                #{hiredate,jdbcType=VARCHAR},
                 #{deptno,jdbcType=NUMERIC})
     </insert>
     <!-- 批量插入数据 -->
@@ -83,7 +83,7 @@
                 #{mgr,jdbcType=NUMERIC},
             </if>
             <if test="hiredate != null">
-                #{hiredate,jdbcType=DATE},
+                #{hiredate,jdbcType=VARCHAR},
             </if>
             <if test="deptno != null">
                 #{deptno,jdbcType=NUMERIC}
@@ -103,7 +103,7 @@
                 MGR = #{mgr,jdbcType=NUMERIC},
             </if>
             <if test="hiredate != null">
-                HIREDATE = #{hiredate,jdbcType=DATE},
+                HIREDATE = #{hiredate,jdbcType=VARCHAR},
             </if>
             <if test="deptno != null">
                 DEPTNO = #{deptno,jdbcType=NUMERIC}
@@ -116,7 +116,7 @@
         set ENAME    = #{ename,jdbcType=VARCHAR},
             JOB      = #{job,jdbcType=VARCHAR},
             MGR      = #{mgr,jdbcType=NUMERIC},
-            HIREDATE = #{hiredate,jdbcType=DATE},
+            HIREDATE = #{hiredate,jdbcType=VARCHAR},
             DEPTNO   = #{deptno,jdbcType=NUMERIC}
         where EMPNO = #{empno}
     </update>
