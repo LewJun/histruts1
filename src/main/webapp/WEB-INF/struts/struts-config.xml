@@ -5,12 +5,14 @@
 
 <struts-config>
     <form-beans>
-        <form-bean name="empForm" type="com.microandroid.moudle.emp.bean.EmpForm"/>
+        <form-bean name="empForm" type="com.microandroid.modules.emp.bean.EmpForm"/>
     </form-beans>
 
     <action-mappings>
         <!--parameter必须对应到EmpAction中的实际方法，缺点就是配置的action特别多，
-        实际工作中，我认为为了减少配置，最好还是使用DispatchAction-->
+        实际工作中，我认为为了减少配置，最好还是使用DispatchAction
+        /empAction 对应@Controller("/empAction")
+        -->
         <action path="/empAction"
                 type="org.springframework.web.struts.DelegatingActionProxy"
                 name="empForm"

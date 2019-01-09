@@ -76,10 +76,10 @@
 
 <struts-config>
     <form-beans>
-        <form-bean name="empForm" type="com.microandroid.moudle.emp.bean.EmpForm"/>
+        <form-bean name="empForm" type="EmpForm"/>
     </form-beans>
     <action-mappings>
-        <action path="/emp" name="empForm" type="com.microandroid.moudle.emp.action.EmpAction">
+        <action path="/emp" name="empForm" type="EmpAction">
             <forward name="index" path="/WEB-INF/views/emp/index.jsp"/>
             <forward name="success" path="/WEB-INF/views/emp/success.jsp"/>
             <forward name="error" path="/WEB-INF/views/emp/error.jsp"/>
@@ -480,7 +480,7 @@ activeByDefault 代表默认激活
 ``` Java
 package com.microandroid.moudle.emp.service;
 
-import com.microandroid.moudle.emp.bean.EmpForm;
+import EmpForm;
 
 import java.util.List;
 
@@ -511,8 +511,8 @@ public interface IEmpService<T extends EmpForm> {
 ``` Java
 package com.microandroid.moudle.emp.service.impl;
 
-import com.microandroid.moudle.emp.bean.EmpForm;
-import com.microandroid.moudle.emp.service.IEmpService;
+import EmpForm;
+import IEmpService;
 
 import java.util.List;
 
@@ -646,7 +646,7 @@ public class EmpAction extends DispatchAction {
 ``` Java
 <action path="/emp"
         name="empForm"
-        type="com.microandroid.moudle.emp.action.EmpAction"
+        type="EmpAction"
         parameter="method"
 >
 ```
@@ -684,11 +684,11 @@ public class EmpAction extends MappingDispatchAction {
     <action-mappings>
         <!--parameter必须对应到EmpAction中的实际方法，缺点就是配置的action特别多，
         实际工作中，我认为为了减少配置，最好还是使用DispatchAction-->
-        <action path="/emp/save" type="com.microandroid.moudle.emp.action.EmpAction" parameter="save">
+        <action path="/emp/save" type="EmpAction" parameter="save">
             <forward name="success" path="/WEB-INF/views/emp/success.jsp"/>
         </action>
 
-        <action path="/emp/delete" type="com.microandroid.moudle.emp.action.EmpAction" parameter="delete">
+        <action path="/emp/delete" type="EmpAction" parameter="delete">
             <forward name="error" path="/WEB-INF/views/emp/error.jsp"/>
         </action>
     </action-mappings>
@@ -766,8 +766,8 @@ EmpAction.java
         http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
-    <bean name="empService" class="com.microandroid.moudle.emp.service.impl.EmpServiceImpl"/>
-    <bean name="/empAction" class="com.microandroid.moudle.emp.action.EmpAction">
+    <bean name="empService" class="EmpServiceImpl"/>
+    <bean name="/empAction" class="EmpAction">
         <property name="empService" ref="empService"/>
     </bean>
 </beans>
@@ -809,10 +809,10 @@ action的type也要改变成为org.springframework.web.struts.DelegatingActionPr
         http://www.springframework.org/schema/context/spring-context-2.5.xsd">
 
     <!--自动扫描Action-->
-    <context:component-scan base-package="com.microandroid.moudle.**.action"/>
+    <context:component-scan base-package="com.microandroid.modules.**.action"/>
 
     <!--自动扫描Service-->
-    <context:component-scan base-package="com.microandroid.moudle.**.service"/>
+    <context:component-scan base-package="com.microandroid.modules.**.service"/>
 
 </beans>
 ```
@@ -1071,15 +1071,15 @@ jdbc.maxWait=60000
 ```xml
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.microandroid.moudle.emp.mapper.IEmpMapper">
-    <resultMap id="BaseResultMap" type="com.microandroid.moudle.emp.dto.Emp">
+<mapper namespace="IEmpMapper">
+    <resultMap id="BaseResultMap" type="Emp">
         <id column="EMPNO" property="empno" jdbcType="INTEGER"/>
         <result column="ENAME" property="ename" jdbcType="VARCHAR"/>
         <result column="JOB" property="job" jdbcType="VARCHAR"/>
         <result column="MGR" property="mgr" jdbcType="INTEGER"/>
         <result column="HIREDATE" property="hiredate" jdbcType="DATE"/>
         <result column="DEPTNO" property="deptno" jdbcType="INTEGER"/>
-        <collection property="empList" ofType="com.microandroid.moudle.emp.dto.Emp">
+        <collection property="empList" ofType="Emp">
             <result column="ENAME1" property="ename" jdbcType="VARCHAR"/>
             <result column="JOB1" property="job" jdbcType="VARCHAR"/>
             <result column="MGR1" property="mgr" jdbcType="INTEGER"/>
@@ -1101,7 +1101,7 @@ jdbc.maxWait=60000
     <!-- 插入一个对象到数据库
     empno字段自增长
     -->
-    <insert id="insert" parameterType="com.microandroid.moudle.emp.dto.Emp">
+    <insert id="insert" parameterType="Emp">
         insert into emp (EMPNO, ENAME, JOB, MGR, HIREDATE, DEPTNO)
         values (#{empno,jdbcType=NUMERIC},
                 #{ename,jdbcType=VARCHAR},
@@ -1118,7 +1118,7 @@ jdbc.maxWait=60000
             (#{item.empno},#{item.ename}, #{item.job}, #{item.mgr}, #{item.hiredate}, #{item.deptno})
         </foreach>
     </insert>
-    <insert id="insertSelective" parameterType="com.microandroid.moudle.emp.dto.Emp">
+    <insert id="insertSelective" parameterType="Emp">
         insert into emp
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="empno != null">
@@ -1161,7 +1161,7 @@ jdbc.maxWait=60000
             </if>
         </trim>
     </insert>
-    <update id="updateByPrimaryKeySelective" parameterType="com.microandroid.moudle.emp.dto.Emp">
+    <update id="updateByPrimaryKeySelective" parameterType="Emp">
         update emp
         <set>
             <if test="ename != null">
@@ -1182,7 +1182,7 @@ jdbc.maxWait=60000
         </set>
         where EMPNO = #{empno}
     </update>
-    <update id="updateByPrimaryKey" parameterType="com.microandroid.moudle.emp.dto.Emp">
+    <update id="updateByPrimaryKey" parameterType="Emp">
         update emp
         set ENAME    = #{ename,jdbcType=VARCHAR},
             JOB      = #{job,jdbcType=VARCHAR},
@@ -1233,7 +1233,7 @@ jdbc.maxWait=60000
 ```java
 package com.microandroid.moudle.emp.service;
 
-import com.microandroid.moudle.emp.dto.Emp;
+import Emp;
 
 import java.io.Serializable;
 import java.util.List;
@@ -1318,9 +1318,9 @@ public interface IEmpService<T extends Emp> {
 ```java
 package com.microandroid.moudle.emp.service.impl;
 
-import com.microandroid.moudle.emp.dto.Emp;
-import com.microandroid.moudle.emp.mapper.IEmpMapper;
-import com.microandroid.moudle.emp.service.IEmpService;
+import Emp;
+import IEmpMapper;
+import IEmpService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -1385,7 +1385,7 @@ public class EmpServiceImpl implements IEmpService<Emp> {
 ```java
 package com.microandroid.moudle.emp.mapper;
 
-import com.microandroid.moudle.emp.dto.Emp;
+import Emp;
 import org.springframework.stereotype.Repository;
 
 import java.io.Serializable;

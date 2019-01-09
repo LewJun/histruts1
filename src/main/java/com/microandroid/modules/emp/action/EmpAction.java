@@ -1,9 +1,9 @@
-package com.microandroid.moudle.emp.action;
+package com.microandroid.modules.emp.action;
 
 import com.microandroid.base.BaseAppAction;
-import com.microandroid.moudle.emp.bean.EmpForm;
-import com.microandroid.moudle.emp.dto.Emp;
-import com.microandroid.moudle.emp.service.IEmpService;
+import com.microandroid.modules.emp.bean.EmpForm;
+import com.microandroid.modules.emp.dto.Emp;
+import com.microandroid.modules.emp.service.IEmpService;
 import com.microandroid.utils.MappingUtil;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;

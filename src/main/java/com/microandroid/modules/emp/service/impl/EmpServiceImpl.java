@@ -1,8 +1,8 @@
-package com.microandroid.moudle.emp.service.impl;
+package com.microandroid.modules.emp.service.impl;
 
-import com.microandroid.moudle.emp.dto.Emp;
-import com.microandroid.moudle.emp.mapper.IEmpMapper;
-import com.microandroid.moudle.emp.service.IEmpService;
+import com.microandroid.modules.emp.dto.Emp;
+import com.microandroid.modules.emp.mapper.IEmpMapper;
+import com.microandroid.modules.emp.service.IEmpService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

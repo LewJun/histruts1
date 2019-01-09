@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.microandroid.moudle.emp.mapper.IEmpMapper">
-    <resultMap id="BaseResultMap" type="com.microandroid.moudle.emp.dto.Emp">
+<mapper namespace="com.microandroid.modules.emp.mapper.IEmpMapper">
+    <resultMap id="BaseResultMap" type="com.microandroid.modules.emp.dto.Emp">
         <id column="EMPNO" property="empno" jdbcType="INTEGER"/>
         <result column="ENAME" property="ename" jdbcType="VARCHAR"/>
         <result column="JOB" property="job" jdbcType="VARCHAR"/>
         <result column="MGR" property="mgr" jdbcType="INTEGER"/>
         <result column="HIREDATE" property="hiredate" jdbcType="VARCHAR"/>
         <result column="DEPTNO" property="deptno" jdbcType="INTEGER"/>
-        <collection property="empList" ofType="com.microandroid.moudle.emp.dto.Emp">
+        <collection property="empList" ofType="com.microandroid.modules.emp.dto.Emp">
             <result column="ENAME1" property="ename" jdbcType="VARCHAR"/>
             <result column="JOB1" property="job" jdbcType="VARCHAR"/>
             <result column="MGR1" property="mgr" jdbcType="INTEGER"/>
@@ -30,7 +30,7 @@
     <!-- 插入一个对象到数据库
     empno字段自增长
     -->
-    <insert id="insert" parameterType="com.microandroid.moudle.emp.dto.Emp">
+    <insert id="insert" parameterType="com.microandroid.modules.emp.dto.Emp">
         insert into emp (EMPNO, ENAME, JOB, MGR, HIREDATE, DEPTNO)
         values (#{empno,jdbcType=NUMERIC},
                 #{ename,jdbcType=VARCHAR},
@@ -47,7 +47,7 @@
             (#{item.empno},#{item.ename}, #{item.job}, #{item.mgr}, #{item.hiredate}, #{item.deptno})
         </foreach>
     </insert>
-    <insert id="insertSelective" parameterType="com.microandroid.moudle.emp.dto.Emp">
+    <insert id="insertSelective" parameterType="com.microandroid.modules.emp.dto.Emp">
         insert into emp
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="empno != null">
@@ -90,7 +90,7 @@
             </if>
         </trim>
     </insert>
-    <update id="updateByPrimaryKeySelective" parameterType="com.microandroid.moudle.emp.dto.Emp">
+    <update id="updateByPrimaryKeySelective" parameterType="com.microandroid.modules.emp.dto.Emp">
         update emp
         <set>
             <if test="ename != null">
@@ -111,7 +111,7 @@
         </set>
         where EMPNO = #{empno}
     </update>
-    <update id="updateByPrimaryKey" parameterType="com.microandroid.moudle.emp.dto.Emp">
+    <update id="updateByPrimaryKey" parameterType="com.microandroid.modules.emp.dto.Emp">
         update emp
         set ENAME    = #{ename,jdbcType=VARCHAR},
             JOB      = #{job,jdbcType=VARCHAR},

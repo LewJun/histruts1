@@ -1,14 +1,12 @@
-package com.microandroid.moudle.emp.bean;
+package com.microandroid.modules.emp.dto;
 
-import org.apache.struts.action.ActionForm;
+import java.util.List;
 
 /**
  * @author LewJun
- * @version v0.1 2018/09/30 14:07 LewJun Exp $$
+ * @version v0.1 2018/10/18 19:34 LewJun Exp $$
  */
-public class EmpForm extends ActionForm {
-    private static final long serialVersionUID = 242511355679756376L;
-
+public class Emp {
     private Integer empno;
 
     private String ename;
@@ -20,6 +18,8 @@ public class EmpForm extends ActionForm {
     private String hiredate;
 
     private Integer deptno;
+
+    private List<Emp> empList;
 
     public Integer getEmpno() {
         return empno;
@@ -69,15 +69,24 @@ public class EmpForm extends ActionForm {
         this.deptno = deptno;
     }
 
+    public List<Emp> getEmpList() {
+        return empList;
+    }
+
+    public void setEmpList(List<Emp> empList) {
+        this.empList = empList;
+    }
+
     @Override
     public String toString() {
-        return "EmpForm{" +
+        return "Emp{" +
                 "empno=" + empno +
                 ", ename='" + ename + '\'' +
                 ", job='" + job + '\'' +
                 ", mgr=" + mgr +
                 ", hiredate='" + hiredate + '\'' +
                 ", deptno=" + deptno +
+                ", empList=" + empList +
                 '}';
     }
 }

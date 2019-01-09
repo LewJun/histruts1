@@ -1,13 +1,11 @@
-package com.microandroid.moudle.emp.mapper;
+package com.microandroid.modules.emp.service;
 
-import com.microandroid.moudle.emp.dto.Emp;
-import org.springframework.stereotype.Repository;
+import com.microandroid.modules.emp.dto.Emp;
 
 import java.io.Serializable;
 import java.util.List;
 
-@Repository
-public interface IEmpMapper {
+public interface IEmpService<T extends Emp> {
 
     /**
      * 根据pk删除
