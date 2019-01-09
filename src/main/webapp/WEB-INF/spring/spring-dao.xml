@@ -44,6 +44,8 @@
     <!-- 第二步：配置sessionFactory -->
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
         <property name="dataSource" ref="druidDataSource"/>
+        <!-- 配置MyBatis全局配置文件:mybatis-config.xml -->
+        <property name="configLocation" value="classpath:conf/mybatis-config.xml" />
         <property name="mapperLocations" value="classpath:mappers/**/*.xml"/>
     </bean>
     <!-- 第三步：配置DAO，这里使用 MapperScannerConfigurer扫描指定规则下的接口，根据Mapper自动生成DAO的实现 -->
