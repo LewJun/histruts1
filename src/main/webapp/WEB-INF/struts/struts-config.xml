@@ -8,6 +8,20 @@
         <form-bean name="empForm" type="com.microandroid.modules.emp.bean.EmpForm"/>
     </form-beans>
 
+    <!--全局异常处理器
+    当发生异常的时候，交给Handler处理
+    -->
+    <global-exceptions>
+        <exception type="java.lang.Exception"
+                   handler="com.microandroid.exception.GlobalExceptionHandler"
+                   key="error"/>
+    </global-exceptions>
+
+    <!--全局跳转-->
+    <global-forwards>
+        <forward name="global-error" path="/WEB-INF/views/error/error.jsp"/>
+    </global-forwards>
+
     <action-mappings>
         <!--parameter必须对应到EmpAction中的实际方法，缺点就是配置的action特别多，
         实际工作中，我认为为了减少配置，最好还是使用DispatchAction
@@ -30,11 +44,12 @@
             <forward name="error" path="/WEB-INF/views/emp/error.jsp"/>
             <forward name="add" path="/WEB-INF/views/emp/add.jsp"/>
             <forward name="edit" path="/WEB-INF/views/emp/edit.jsp"/>
+            <forward name="mockException" path="/empAction.do?method=index"/>
         </action>
     </action-mappings>
 
     <!--配置spring 将spring委托给struts-->
     <plug-in className="org.springframework.web.struts.ContextLoaderPlugIn">
-        <set-property property="contextConfigLocation" value="/WEB-INF/spring/spring.xml" />
+        <set-property property="contextConfigLocation" value="/WEB-INF/spring/spring.xml"/>
     </plug-in>
 </struts-config>
