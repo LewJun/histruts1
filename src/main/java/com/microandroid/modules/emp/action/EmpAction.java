@@ -1,9 +1,11 @@
 package com.microandroid.modules.emp.action;
 
 import com.microandroid.base.BaseAppAction;
+import com.microandroid.exception.GlobalException;
 import com.microandroid.modules.emp.bean.EmpForm;
 import com.microandroid.modules.emp.dto.Emp;
 import com.microandroid.modules.emp.service.IEmpService;
+import com.microandroid.result.ServiceStatus;
 import com.microandroid.utils.MappingUtil;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -28,7 +30,6 @@ public class EmpAction extends BaseAppAction {
 
     public ActionForward save(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         LOGGER.info("save");
-        LOGGER.info("{}", empService);
         EmpForm empForm = (EmpForm) form;
         Emp emp = new Emp();
         BeanUtils.copyProperties(empForm, emp);
@@ -38,7 +39,6 @@ public class EmpAction extends BaseAppAction {
 
     public ActionForward delete(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         LOGGER.info("delete");
-        LOGGER.info("{}", empService);
         String empno = request.getParameter("empno");
         empService.deleteByPrimaryKey(Integer.valueOf(empno));
         return MappingUtil.forward(mapping, "saveSuccess");
@@ -46,7 +46,6 @@ public class EmpAction extends BaseAppAction {
 
     public ActionForward index(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         LOGGER.info("index");
-        LOGGER.info("{}", empService);
         List<Emp> empList = empService.selectAll();
         LOGGER.info("{}", empList);
         request.setAttribute("empList", empList);
@@ -76,4 +75,13 @@ public class EmpAction extends BaseAppAction {
         return MappingUtil.forward(mapping, "saveSuccess");
     }
 
+    /**
+     * 模拟发生一个异常
+     */
+    public ActionForward mockException(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                       HttpServletResponse response) throws Exception {
+        LOGGER.info("mockException");
+
+        throw new GlobalException(ServiceStatus.FAILED);
+    }
 }
