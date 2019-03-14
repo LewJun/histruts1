@@ -48,6 +48,9 @@
         </action>
     </action-mappings>
 
+    <!--依赖资源文件，做国际化-->
+    <message-resources parameter="conf.ApplicationResource"/>
+
     <!--配置spring 将spring委托给struts-->
     <plug-in className="org.springframework.web.struts.ContextLoaderPlugIn">
         <set-property property="contextConfigLocation" value="/WEB-INF/spring/spring.xml"/>
