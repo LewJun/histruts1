@@ -84,4 +84,14 @@ public class EmpAction extends BaseAppAction {
 
         throw new GlobalException(ServiceStatus.FAILED);
     }
+
+    /**
+     * 返回数据
+     */
+    public ActionForward getEmpList(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        LOGGER.info("getEmpList");
+
+        return MappingUtil.renderJson(response, empService.selectAll());
+    }
+
 }

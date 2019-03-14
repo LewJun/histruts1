@@ -13,14 +13,16 @@
 </head>
 <body>
 <h1>Emp Manage</h1>
-<a href="empAction.do?method=add">Add Emp</a>
-<br/>
-<a href="empAction.do?method=mockException">Mock Exception</a>
-<br/>
-<a href="javascript:void(1);" id="mockExAjax">Mock Exception Ajax</a>
-<table>
+<div class="w3-bar">
+    <a class="w3-bar-item w3-button" href="empAction.do?method=add">Add Emp</a>
+    <a class="w3-bar-item w3-button" href="empAction.do?method=mockException">Mock Exception</a>
+    <a class="w3-bar-item w3-button" href="javascript:void(0);" id="mockExAjax">Mock Exception Ajax</a>
+    <a class="w3-bar-item w3-button" href="javascript:void(0);" id="getEmpListByAjax">getEmpListByAjax</a>
+
+</div>
+<table class="w3-table-all">
     <tbody>
-    <tr>
+    <tr class="w3-red">
         <th>Empno</th>
         <th>Ename</th>
         <th>Opr</th>
