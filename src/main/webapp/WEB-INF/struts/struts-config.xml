@@ -14,12 +14,14 @@
     <global-exceptions>
         <exception type="java.lang.Exception"
                    handler="com.microandroid.exception.GlobalExceptionHandler"
-                   key="error"/>
+                   key="error"
+                   path="/WEB-INF/views/error/error.jsp"
+        />
     </global-exceptions>
 
     <!--全局跳转-->
     <global-forwards>
-        <forward name="global-error" path="/WEB-INF/views/error/error.jsp"/>
+        <forward name="global-index" path="/WEB-INF/index.jsp"/>
     </global-forwards>
 
     <action-mappings>

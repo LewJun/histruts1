@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.microandroid.result.ApiResult;
 import com.microandroid.result.ServiceStatus;
-import com.microandroid.utils.MappingUtil;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -72,7 +71,7 @@ public class GlobalExceptionHandler extends ExceptionHandler {
             return null;
         } else {
             request.setAttribute("err", ret);
-            return MappingUtil.forward(mapping, "global-error");
+            return super.execute(ex, ae, mapping, formInstance, request, response);
         }
     }
 }
