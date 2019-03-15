@@ -1,4 +1,4 @@
-package com.microandroid.modules.emp.bean;
+package com.microandroid.modules.emp.form;
 
 import org.apache.struts.action.ActionForm;
 

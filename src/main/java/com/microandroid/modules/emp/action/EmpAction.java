@@ -2,7 +2,7 @@ package com.microandroid.modules.emp.action;
 
 import com.microandroid.base.BaseAppAction;
 import com.microandroid.exception.GlobalException;
-import com.microandroid.modules.emp.bean.EmpForm;
+import com.microandroid.modules.emp.form.EmpForm;
 import com.microandroid.modules.emp.dto.Emp;
 import com.microandroid.modules.emp.service.IEmpService;
 import com.microandroid.result.ServiceStatus;
