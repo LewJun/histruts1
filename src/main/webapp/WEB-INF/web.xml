@@ -32,6 +32,36 @@
     </welcome-file-list>
 
 
+    <filter>
+        <filter-name>ReqlogFilter</filter-name>
+        <filter-class>com.microandroid.filters.ReqlogFilter</filter-class>
+        <init-param>
+            <param-name>pn1</param-name>
+            <param-value>pv1</param-value>
+        </init-param>
+        <init-param>
+            <param-name>pn2</param-name>
+            <param-value>pv2</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>ReqlogFilter</filter-name>
+        <url-pattern>*.do</url-pattern>
+    </filter-mapping>
+
+    <filter>
+        <filter-name>EncodingFilter</filter-name>
+        <filter-class>com.microandroid.filters.EncodingFilter</filter-class>
+        <init-param>
+            <param-name>encode</param-name>
+            <param-value>utf-8</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>EncodingFilter</filter-name>
+        <url-pattern>*.do</url-pattern>
+    </filter-mapping>
+
     <!-- 连接池 启用 Web 监控统计功能    start-->
     <filter>
         <filter-name>DruidWebStatFilter</filter-name>
