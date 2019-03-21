@@ -1,0 +1,39 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+    <bean name="taskGreet" class="com.microandroid.task.greet.TaskGreet"/>
+    <!-- Scheduler job -->
+    <bean name="schedulerJobGreet"
+          class="org.springframework.scheduling.quartz.JobDetailBean">
+        <property name="jobClass" value="com.microandroid.task.greet.JobGreet"/>
+        <property name="jobDataAsMap">
+            <map>
+                <entry key="taskGreet" value-ref="taskGreet"/>
+            </map>
+        </property>
+    </bean>
+
+    <!-- Cron Trigger -->
+    <bean id="cronTriggerGreet"
+          class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail" ref="schedulerJobGreet"/>
+        <!--每隔8秒执行-->
+        <property name="cronExpression" value="0/8 * * * * ?"/>
+    </bean>
+
+    <!-- Scheduler -->
+    <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="jobDetails">
+            <list>
+                <ref bean="schedulerJobGreet"/>
+            </list>
+        </property>
+
+        <property name="triggers">
+            <list>
+                <ref bean="cronTriggerGreet"/>
+            </list>
+        </property>
+    </bean>
+</beans>

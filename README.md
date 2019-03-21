@@ -1545,3 +1545,95 @@ public class Emp {
               <artifactId>maven-compiler-plugin</artifactId>
               <version>3.3</version>
         ```
+
+
+### 集成 Quartz
+
+* 添加依赖
+
+```xml
+<!--quartz-scheduler-->
+<dependency>
+    <groupId>org.quartz-scheduler</groupId>
+    <artifactId>quartz</artifactId>
+    <version>1.8.6</version>
+</dependency>
+```
+
+* 添加job
+```java
+public class JobGreet extends QuartzJobBean {
+    private static final Logger LOGGER = LoggerFactory.getLogger(JobGreet.class);
+
+    private TaskGreet taskGreet;
+
+    public void setTaskGreet(TaskGreet taskGreet) {
+        this.taskGreet = taskGreet;
+    }
+
+    @Override
+    protected void executeInternal(JobExecutionContext jobExecutionContext) throws JobExecutionException {
+        taskGreet.greet();
+    }
+}
+```
+
+* 添加task[可选]
+```java
+public class TaskGreet {
+    private static final Logger LOGGER = LoggerFactory.getLogger(TaskGreet.class);
+
+    @Autowired
+    private IEmpService<Emp> empService;
+
+    void greet() {
+        LOGGER.info("hi buddy ~ {}", empService);
+    }
+}
+
+```
+
+* 配置spring-scheduler.xml
+```xml
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+    <bean name="taskGreet" class="com.microandroid.task.greet.TaskGreet"/>
+    <!-- Scheduler job -->
+    <bean name="schedulerJobGreet"
+          class="org.springframework.scheduling.quartz.JobDetailBean">
+        <property name="jobClass" value="com.microandroid.task.greet.JobGreet"/>
+        <property name="jobDataAsMap">
+            <map>
+                <entry key="taskGreet" value-ref="taskGreet"/>
+            </map>
+        </property>
+    </bean>
+
+    <!-- Cron Trigger -->
+    <bean id="cronTriggerGreet"
+          class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail" ref="schedulerJobGreet"/>
+        <!--每隔8秒执行-->
+        <property name="cronExpression" value="0/8 * * * * ?"/>
+    </bean>
+
+    <!-- Scheduler -->
+    <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="jobDetails">
+            <list>
+                <ref bean="schedulerJobGreet"/>
+            </list>
+        </property>
+
+        <property name="triggers">
+            <list>
+                <ref bean="cronTriggerGreet"/>
+            </list>
+        </property>
+    </bean>
+</beans>
+
+```
+

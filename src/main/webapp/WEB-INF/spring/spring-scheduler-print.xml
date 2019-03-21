@@ -1,0 +1,44 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+
+    <!--自动扫描-->
+    <!--<context:component-scan base-package="com.microandroid.task.print"/>-->
+    <bean name="taskPrint" class="com.microandroid.task.print.TaskPrint"/>
+    <!-- Scheduler job -->
+    <bean name="schedulerJobPrint"
+          class="org.springframework.scheduling.quartz.JobDetailBean">
+        <property name="jobClass" value="com.microandroid.task.print.JobPrint"/>
+        <property name="jobDataAsMap">
+            <map>
+                <entry key="taskPrint" value-ref="taskPrint"/>
+            </map>
+        </property>
+    </bean>
+
+    <!-- Cron Trigger -->
+    <bean id="cronTriggerPrint"
+          class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail" ref="schedulerJobPrint"/>
+        <property name="cronExpression" value="0/5 * * * * ?"/>
+    </bean>
+
+    <!-- Scheduler -->
+    <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="jobDetails">
+            <list>
+                <ref bean="schedulerJobPrint"/>
+            </list>
+        </property>
+
+        <property name="triggers">
+            <list>
+                <ref bean="cronTriggerPrint"/>
+            </list>
+        </property>
+    </bean>
+</beans>
