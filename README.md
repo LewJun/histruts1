@@ -1664,6 +1664,9 @@ class="com.baomidou.mybatisplus.spring.MybatisSqlSessionFactoryBean">
 使用@TableId配置主键
 
 #### 重新定义接口IEmpService
+
+继承自IService
+
 ```java
 
 import com.baomidou.mybatisplus.service.IService;
@@ -1687,6 +1690,8 @@ public interface IEmpService extends IService<Emp> {
 
 #### 重新定义EmpServiceImpl
 
+继承自ServiceImpl，实现自己的接口
+
 ```java
 
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
@@ -1709,6 +1714,8 @@ public class EmpServiceImpl extends ServiceImpl<IEmpMapper, Emp> implements IEmp
 ```
 
 #### 重新定义IEmpMapper
+
+继承自BaseMapper
 
 ```java
 
