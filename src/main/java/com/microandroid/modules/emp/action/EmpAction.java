@@ -2,8 +2,8 @@ package com.microandroid.modules.emp.action;
 
 import com.microandroid.base.BaseAppAction;
 import com.microandroid.exception.GlobalException;
-import com.microandroid.modules.emp.form.EmpForm;
 import com.microandroid.modules.emp.dto.Emp;
+import com.microandroid.modules.emp.form.EmpForm;
 import com.microandroid.modules.emp.service.IEmpService;
 import com.microandroid.result.ServiceStatus;
 import com.microandroid.utils.MappingUtil;
@@ -26,27 +26,38 @@ import java.util.List;
 public class EmpAction extends BaseAppAction {
 
     @Autowired
-    private IEmpService<Emp> empService;
+    private IEmpService empService;
+
+    /**
+     * 得到form
+     */
+    private EmpForm getForm(ActionForm form) {
+        return (EmpForm) form;
+    }
 
     public ActionForward save(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         LOGGER.info("save");
-        EmpForm empForm = (EmpForm) form;
         Emp emp = new Emp();
-        BeanUtils.copyProperties(empForm, emp);
+        BeanUtils.copyProperties(getForm(form), emp);
         empService.insert(emp);
         return MappingUtil.forward(mapping, "saveSuccess");
     }
 
     public ActionForward delete(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         LOGGER.info("delete");
-        String empno = request.getParameter("empno");
-        empService.deleteByPrimaryKey(Integer.valueOf(empno));
+        Integer empno = Integer.valueOf(request.getParameter("empno"));
+        List<Emp> emps = empService.selectSubEmpByPrimaryKey(empno);
+        if (emps != null && emps.size() > 0) {
+            throw new GlobalException("存在下属成员，不允许删除。");
+        }
+
+        empService.deleteById(empno);
         return MappingUtil.forward(mapping, "saveSuccess");
     }
 
     public ActionForward index(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         LOGGER.info("index");
-        List<Emp> empList = empService.selectAll();
+        List<Emp> empList = empService.selectList(null);
         LOGGER.info("{}", empList);
         request.setAttribute("empList", empList);
         return MappingUtil.forward(mapping, "index");
@@ -60,7 +71,7 @@ public class EmpAction extends BaseAppAction {
     public ActionForward edit(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         LOGGER.info("edit");
         String empno = request.getParameter("empno");
-        Emp emp = empService.selectByPrimaryKey(Integer.valueOf(empno));
+        Emp emp = empService.selectById(empno);
         LOGGER.info("{}", emp);
         request.setAttribute("emp", emp);
         return MappingUtil.forward(mapping, "edit");
@@ -68,10 +79,9 @@ public class EmpAction extends BaseAppAction {
 
     public ActionForward update(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         LOGGER.info("update");
-        EmpForm empForm = (EmpForm) form;
         Emp emp = new Emp();
-        BeanUtils.copyProperties(empForm, emp);
-        empService.updateByPrimaryKey(emp);
+        BeanUtils.copyProperties(getForm(form), emp);
+        empService.updateById(emp);
         return MappingUtil.forward(mapping, "saveSuccess");
     }
 
@@ -91,7 +101,7 @@ public class EmpAction extends BaseAppAction {
     public ActionForward getEmpList(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         LOGGER.info("getEmpList");
 
-        return MappingUtil.renderJson(response, empService.selectAll());
+        return MappingUtil.renderJson(response, empService.selectList(null));
     }
 
 }

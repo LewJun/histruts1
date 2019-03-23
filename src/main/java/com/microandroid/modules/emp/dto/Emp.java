@@ -1,12 +1,14 @@
 package com.microandroid.modules.emp.dto;
 
-import java.util.List;
+import com.baomidou.mybatisplus.annotations.TableId;
 
 /**
  * @author LewJun
  * @version v0.1 2018/10/18 19:34 LewJun Exp $$
  */
+//@TableName
 public class Emp {
+    @TableId
     private Integer empno;
 
     private String ename;
@@ -18,8 +20,6 @@ public class Emp {
     private String hiredate;
 
     private Integer deptno;
-
-    private List<Emp> empList;
 
     public Integer getEmpno() {
         return empno;
@@ -69,14 +69,6 @@ public class Emp {
         this.deptno = deptno;
     }
 
-    public List<Emp> getEmpList() {
-        return empList;
-    }
-
-    public void setEmpList(List<Emp> empList) {
-        this.empList = empList;
-    }
-
     @Override
     public String toString() {
         return "Emp{" +
@@ -86,7 +78,6 @@ public class Emp {
                 ", mgr=" + mgr +
                 ", hiredate='" + hiredate + '\'' +
                 ", deptno=" + deptno +
-                ", empList=" + empList +
                 '}';
     }
 }

@@ -1637,3 +1637,98 @@ public class TaskGreet {
 
 ```
 
+### 集成mybatis-plus
+
+#### 添加依赖
+```xml
+<dependency>
+    <groupId>com.baomidou</groupId>
+    <artifactId>mybatis-plus</artifactId>
+    <version>2.3</version>
+</dependency>
+<!--mybatis-plus 需要cglib-->
+<dependency>
+    <groupId>cglib</groupId>
+    <artifactId>cglib</artifactId>
+    <version>2.2.2</version>
+</dependency>
+```
+
+#### 配置sqlSessionFactory为MybatisSqlSessionFactoryBean
+```xml
+<bean id="sqlSessionFactory" 
+class="com.baomidou.mybatisplus.spring.MybatisSqlSessionFactoryBean">
+```
+
+#### 使用注解配置主键
+使用@TableId配置主键
+
+#### 重新定义接口IEmpService
+```java
+
+import com.baomidou.mybatisplus.service.IService;
+import com.microandroid.modules.emp.dto.Emp;
+
+import java.io.Serializable;
+import java.util.List;
+
+public interface IEmpService extends IService<Emp> {
+
+    /**
+     * 查询员工及其下属员工
+     *
+     * @param pk
+     * @return
+     */
+    List<Emp> selectEmpWithSubEmpByPrimaryKey(Serializable pk);
+}
+
+```
+
+#### 重新定义EmpServiceImpl
+
+```java
+
+import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.microandroid.modules.emp.dto.Emp;
+import com.microandroid.modules.emp.mapper.IEmpMapper;
+import com.microandroid.modules.emp.service.IEmpService;
+import org.springframework.stereotype.Service;
+
+import java.io.Serializable;
+import java.util.List;
+
+@Service
+public class EmpServiceImpl extends ServiceImpl<IEmpMapper, Emp> implements IEmpService {
+
+    @Override
+    public List<Emp> selectEmpWithSubEmpByPrimaryKey(Serializable pk) {
+        return baseMapper.selectEmpWithSubEmpByPrimaryKey(pk);
+    }
+}
+```
+
+#### 重新定义IEmpMapper
+
+```java
+
+import com.baomidou.mybatisplus.mapper.BaseMapper;
+import com.microandroid.modules.emp.dto.Emp;
+import org.springframework.stereotype.Repository;
+
+import java.io.Serializable;
+import java.util.List;
+
+@Repository
+public interface IEmpMapper extends BaseMapper<Emp> {
+
+    /**
+     * 查询员工及其下属员工
+     *
+     * @param pk 主键
+     * @return
+     */
+    List<Emp> selectEmpWithSubEmpByPrimaryKey(Serializable pk);
+}
+
+```

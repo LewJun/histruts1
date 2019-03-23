@@ -8,151 +8,18 @@
         <result column="MGR" property="mgr" jdbcType="INTEGER"/>
         <result column="HIREDATE" property="hiredate" jdbcType="VARCHAR"/>
         <result column="DEPTNO" property="deptno" jdbcType="INTEGER"/>
-        <collection property="empList" ofType="com.microandroid.modules.emp.dto.Emp">
-            <result column="ENAME1" property="ename" jdbcType="VARCHAR"/>
-            <result column="JOB1" property="job" jdbcType="VARCHAR"/>
-            <result column="MGR1" property="mgr" jdbcType="INTEGER"/>
-            <result column="HIREDATE1" property="hiredate" jdbcType="VARCHAR"/>
-            <result column="DEPTNO1" property="deptno" jdbcType="INTEGER"/>
-        </collection>
     </resultMap>
 
     <sql id="Base_Column_List">
         EMPNO, ENAME, JOB, MGR, HIREDATE, DEPTNO
     </sql>
 
-    <sql id="queryAll">
-        select
-        <include refid="Base_Column_List"/>
-        from emp
-    </sql>
-
-    <!-- 插入一个对象到数据库
-    empno字段自增长
-    -->
-    <insert id="insert" parameterType="com.microandroid.modules.emp.dto.Emp">
-        insert into emp (EMPNO, ENAME, JOB, MGR, HIREDATE, DEPTNO)
-        values (#{empno,jdbcType=NUMERIC},
-                #{ename,jdbcType=VARCHAR},
-                #{job,jdbcType=VARCHAR},
-                #{mgr,jdbcType=NUMERIC},
-                #{hiredate,jdbcType=VARCHAR},
-                #{deptno,jdbcType=NUMERIC})
-    </insert>
-    <!-- 批量插入数据 -->
-    <insert id="inserts" parameterType="list">
-        insert into emp (EMPNO,ENAME, JOB, MGR, HIREDATE, DEPTNO)
-        values
-        <foreach collection="list" item="item" separator=",">
-            (#{item.empno},#{item.ename}, #{item.job}, #{item.mgr}, #{item.hiredate}, #{item.deptno})
-        </foreach>
-    </insert>
-    <insert id="insertSelective" parameterType="com.microandroid.modules.emp.dto.Emp">
-        insert into emp
-        <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="empno != null">
-                EMPNO,
-            </if>
-            <if test="ename != null">
-                ENAME,
-            </if>
-            <if test="job != null">
-                JOB,
-            </if>
-            <if test="mgr != null">
-                MGR,
-            </if>
-            <if test="hiredate != null">
-                HIREDATE,
-            </if>
-            <if test="deptno != null">
-                DEPTNO,
-            </if>
-        </trim>
-        <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="empno != null">
-                #{empno,jdbcType=NUMERIC},
-            </if>
-            <if test="ename != null">
-                #{ename,jdbcType=VARCHAR},
-            </if>
-            <if test="job != null">
-                #{job,jdbcType=VARCHAR},
-            </if>
-            <if test="mgr != null">
-                #{mgr,jdbcType=NUMERIC},
-            </if>
-            <if test="hiredate != null">
-                #{hiredate,jdbcType=VARCHAR},
-            </if>
-            <if test="deptno != null">
-                #{deptno,jdbcType=NUMERIC}
-            </if>
-        </trim>
-    </insert>
-    <update id="updateByPrimaryKeySelective" parameterType="com.microandroid.modules.emp.dto.Emp">
-        update emp
-        <set>
-            <if test="ename != null">
-                ENAME = #{ename,jdbcType=VARCHAR},
-            </if>
-            <if test="job != null">
-                JOB = #{job,jdbcType=VARCHAR},
-            </if>
-            <if test="mgr != null">
-                MGR = #{mgr,jdbcType=NUMERIC},
-            </if>
-            <if test="hiredate != null">
-                HIREDATE = #{hiredate,jdbcType=VARCHAR},
-            </if>
-            <if test="deptno != null">
-                DEPTNO = #{deptno,jdbcType=NUMERIC}
-            </if>
-        </set>
-        where EMPNO = #{empno}
-    </update>
-    <update id="updateByPrimaryKey" parameterType="com.microandroid.modules.emp.dto.Emp">
-        update emp
-        set ENAME    = #{ename,jdbcType=VARCHAR},
-            JOB      = #{job,jdbcType=VARCHAR},
-            MGR      = #{mgr,jdbcType=NUMERIC},
-            HIREDATE = #{hiredate,jdbcType=VARCHAR},
-            DEPTNO   = #{deptno,jdbcType=NUMERIC}
-        where EMPNO = #{empno}
-    </update>
-    <!-- 根据pk删除 -->
-    <delete id="deleteByPrimaryKey" parameterType="object">
-        delete
-        from emp
-        where empno = #{pk}
-    </delete>
-
-    <!-- 根据主键查询 -->
-    <select id="selectByPrimaryKey" resultMap="BaseResultMap"
-            parameterType="java.lang.Integer">
-        <include refid="queryAll"/>
-        where EMPNO = #{empno}
-    </select>
-
-    <!-- 查询所有记录 -->
-    <select id="selectAll" resultMap="BaseResultMap">
-        <include refid="queryAll"/>
-    </select>
-
     <!-- 查询员工及其下属员工 -->
-    <select id="selectEmpWithSubEmpByPrimaryKey" parameterType="object"
+    <select id="selectSubEmpByPrimaryKey" parameterType="object"
             resultMap="BaseResultMap">
-        select e1.*, e3.ENAME as ENAME1,e3.JOB as JOB1,e3.MGR as
-        MGR1,e3.HIREDATE as HIREDATE1,e3.DEPTNO as DEPTNO1
-        from emp e1 LEFT JOIN emp e3 ON e1.EMPNO=e3.MGR
-        where EXISTS (
-        select * from emp e2 where e1.EMPNO = e2.mgr
+        select * from emp e1 where exists (
+          select 1 from emp e2 where e1.empno = e2.mgr
         )
-        <where>
-            <if test=" _parameters != null and _parameter != '' ">
-                AND e1.EMPNO=#{_parameter}
-            </if>
-        </where>
-        ORDER BY e1.EMPNO
+        and e1.empno = #{pk}
     </select>
 </mapper>

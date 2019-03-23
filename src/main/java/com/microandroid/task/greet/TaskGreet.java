@@ -1,6 +1,5 @@
 package com.microandroid.task.greet;
 
-import com.microandroid.modules.emp.dto.Emp;
 import com.microandroid.modules.emp.service.IEmpService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +15,7 @@ public class TaskGreet {
     private static final Logger LOGGER = LoggerFactory.getLogger(TaskGreet.class);
 
     @Autowired
-    private IEmpService<Emp> empService;
+    private IEmpService empService;
 
     void greet() {
         LOGGER.info("hi buddy ~ {}", empService);
