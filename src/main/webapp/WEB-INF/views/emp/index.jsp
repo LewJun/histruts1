@@ -33,8 +33,8 @@
                 <td>${emp.empno}</td>
                 <td>${emp.ename}</td>
                 <td>
-                    <a href="empAction.do?method=delete&empno=${emp.empno}">Del</a>
-                    <a href="empAction.do?method=edit&empno=${emp.empno}">Edit</a>
+                    <a href="javascript:void(0)" class="emp-del">Del</a>
+                    <a href="javascript:void(0)" class="emp-edit">Edit</a>
                 </td>
             </tr>
         </c:forEach>
@@ -43,5 +43,6 @@
 </table>
 <script src="${pageContext.request.contextPath}/static/plugins/jq/1.3.2/jquery.min.js"></script>
 <script src="${pageContext.request.contextPath}/static/js/emp/index.js"></script>
+<jsp:include page="edit.jsp"/>
 </body>
 </html>
