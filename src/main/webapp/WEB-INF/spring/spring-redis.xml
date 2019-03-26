@@ -12,7 +12,7 @@
     <!-- 自动扫描(自动注入)，扫描这个包以及它的子包的所有使用注解标注的类 -->
     <context:component-scan base-package="com.microandroid.cache.redis"/>
 
-    <cache:annotation-driven/>
+    <cache:annotation-driven cache-manager="cacheManager"/>
 
     <!-- jedis 配置 -->
     <bean id="poolConfig" class="redis.clients.jedis.JedisPoolConfig">
@@ -48,39 +48,63 @@
     <!-- redis操作模板，面向对象的模板 -->
     <bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate">
         <property name="connectionFactory" ref="connectionFactory"/>
+        <!--
+        如果不使用StringRedisSerializer对key进行序列化，会造成产生的key形如emp?keys，所以必须keySerializer和hashKeySerializer
+        -->
         <property name="keySerializer">
             <bean class="org.springframework.data.redis.serializer.StringRedisSerializer"/>
-        </property>
-        <property name="valueSerializer">
-            <bean class="org.springframework.data.redis.serializer.JdkSerializationRedisSerializer"/>
         </property>
         <property name="hashKeySerializer">
             <bean class="org.springframework.data.redis.serializer.StringRedisSerializer"/>
         </property>
-        <property name="hashValueSerializer">
+        <!--
+        会报类转换异常
+        <property name="valueSerializer">
             <bean class="org.springframework.data.redis.serializer.JdkSerializationRedisSerializer"/>
         </property>
+
+        <property name="hashValueSerializer">
+            <bean class="org.springframework.data.redis.serializer.JdkSerializationRedisSerializer"/>
+        </property>-->
         <!--开启事务  -->
         <property name="enableTransactionSupport" value="true"/>
     </bean>
 
-    <bean id="cacheManager" class="org.springframework.cache.support.SimpleCacheManager">
+    <bean id="simpleCacheManager" class="org.springframework.cache.support.SimpleCacheManager">
         <property name="caches">
             <set>
+                <!--使用redis-->
                 <bean class="org.springframework.data.redis.cache.RedisCache">
-                    <constructor-arg name="name" value="common"/>
-                    <constructor-arg name="prefix" value=""/>
+                    <constructor-arg name="name" value="cache_emp"/>
+                    <constructor-arg name="prefix" value="emp:"/>
                     <constructor-arg name="template" ref="redisTemplate"/>
-                    <constructor-arg name="expiration" value="10"/>
+                    <!--过期时间 s-->
+                    <constructor-arg name="expiration" value="300"/>
                 </bean>
 
+                <!--使用redis-->
                 <bean class="org.springframework.data.redis.cache.RedisCache">
                     <constructor-arg name="name" value="default"/>
                     <constructor-arg name="prefix" value="DEF:"/>
                     <constructor-arg name="template" ref="redisTemplate"/>
                     <constructor-arg name="expiration" value="60"/>
                 </bean>
+
+                <!--如果不想使用redis，可以配其它，也可以使用ConcurrentMap
+                <bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" name="default"/>
+                <bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" name="cache_emp"/>
+                -->
             </set>
         </property>
+    </bean>
+
+    <bean id="cacheManager" class="org.springframework.cache.support.CompositeCacheManager">
+        <property name="cacheManagers">
+            <list>
+                <ref bean="simpleCacheManager"/>
+            </list>
+        </property>
+        <!--当没有可用的cache时，不会报错。-->
+        <property name="fallbackToNoOpCache" value="false"/>
     </bean>
 </beans>

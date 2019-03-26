@@ -18,6 +18,6 @@ public class TaskGreet {
     private IEmpService empService;
 
     void greet() {
-        LOGGER.info("hi buddy ~ {}", empService);
+        LOGGER.info("hi buddy ~ {}", empService.selectById(String.valueOf(7782)));
     }
 }

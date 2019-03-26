@@ -1896,3 +1896,140 @@ redis.pool.maxWaitMillis=1000
     @Autowired
     private RedisCacheManager redisCacheManager;
     redisCacheManager.hasKey("key")
+
+
+#### redis配合spring cache一起使用
+
+* 参考[注释驱动的 Spring cache 缓存介绍](https://www.ibm.com/developerworks/cn/opensource/os-cn-spring-cache/index.html)
+* 参考[spring @Cacheable @CachePut... 使用redis缓存详细步骤](https://blog.csdn.net/u013041642/article/details/80370156)
+
+- 实体类实现Serializable
+```java
+public class Emp implements Serializable {}
+```
+
+- 配置cacheManager
+spring-redis完整配置
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:cache="http://www.springframework.org/schema/cache"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/cache
+	http://www.springframework.org/schema/cache/spring-cache.xsd">
+    <!-- 自动扫描(自动注入)，扫描这个包以及它的子包的所有使用注解标注的类 -->
+    <context:component-scan base-package="com.microandroid.cache.redis"/>
+
+    <cache:annotation-driven cache-manager="cacheManager"/>
+
+    <!-- jedis 配置 -->
+    <bean id="poolConfig" class="redis.clients.jedis.JedisPoolConfig">
+        <property name="minIdle" value="${redis.pool.minIdle}"/>
+        <!-- 最大空闲数 -->
+        <property name="maxIdle" value="${redis.pool.maxIdle}"/>
+        <!-- 最大空连接数 -->
+        <property name="maxTotal" value="${redis.pool.maxTotal}"/>
+        <!-- 最大等待时间 -->
+        <property name="maxWaitMillis" value="${redis.pool.maxWaitMillis}"/>
+        <!-- 连接超时时是否阻塞，false时报异常,ture阻塞直到超时, 默认true -->
+        <property name="blockWhenExhausted" value="${redis.pool.blockWhenExhausted}"/>
+        <!-- 返回连接时，检测连接是否成功 -->
+        <property name="testOnBorrow" value="${redis.pool.testOnBorrow}"/>
+    </bean>
+
+    <!-- redis服务器中心 -->
+    <bean id="connectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">
+        <!-- IP地址 -->
+        <property name="hostName" value="${redis.host}"/>
+        <!-- 端口号 -->
+        <property name="port" value="${redis.port}"/>
+        <!-- 密码 -->
+        <property name="password" value="${redis.password}"/>
+        <!-- 超时时间 默认2000-->
+        <property name="timeout" value="${redis.timeout}"/>
+        <!-- usePool：是否使用连接池 -->
+        <property name="usePool" value="true"/>
+        <!-- 连接池配置引用 -->
+        <property name="poolConfig" ref="poolConfig"/>
+    </bean>
+
+    <!-- redis操作模板，面向对象的模板 -->
+    <bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate">
+        <property name="connectionFactory" ref="connectionFactory"/>
+        <!--
+        如果不使用StringRedisSerializer对key进行序列化，会造成产生的key形如emp?keys，所以必须keySerializer和hashKeySerializer
+        -->
+        <property name="keySerializer">
+            <bean class="org.springframework.data.redis.serializer.StringRedisSerializer"/>
+        </property>
+        <property name="hashKeySerializer">
+            <bean class="org.springframework.data.redis.serializer.StringRedisSerializer"/>
+        </property>
+        <!--
+        会报类转换异常
+        <property name="valueSerializer">
+            <bean class="org.springframework.data.redis.serializer.JdkSerializationRedisSerializer"/>
+        </property>
+
+        <property name="hashValueSerializer">
+            <bean class="org.springframework.data.redis.serializer.JdkSerializationRedisSerializer"/>
+        </property>-->
+        <!--开启事务  -->
+        <property name="enableTransactionSupport" value="true"/>
+    </bean>
+
+    <bean id="simpleCacheManager" class="org.springframework.cache.support.SimpleCacheManager">
+        <property name="caches">
+            <set>
+                <!--使用redis-->
+                <bean class="org.springframework.data.redis.cache.RedisCache">
+                    <constructor-arg name="name" value="cache_emp"/>
+                    <constructor-arg name="prefix" value="emp:"/>
+                    <constructor-arg name="template" ref="redisTemplate"/>
+                    <!--过期时间 s-->
+                    <constructor-arg name="expiration" value="300"/>
+                </bean>
+
+                <!--使用redis-->
+                <bean class="org.springframework.data.redis.cache.RedisCache">
+                    <constructor-arg name="name" value="default"/>
+                    <constructor-arg name="prefix" value="DEF:"/>
+                    <constructor-arg name="template" ref="redisTemplate"/>
+                    <constructor-arg name="expiration" value="60"/>
+                </bean>
+
+                <!--如果不想使用redis，可以配其它，也可以使用ConcurrentMap
+                <bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" name="default"/>
+                <bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" name="cache_emp"/>
+                -->
+            </set>
+        </property>
+    </bean>
+
+    <bean id="cacheManager" class="org.springframework.cache.support.CompositeCacheManager">
+        <property name="cacheManagers">
+            <list>
+                <ref bean="simpleCacheManager"/>
+            </list>
+        </property>
+        <!--当没有可用的cache时，不会报错。-->
+        <property name="fallbackToNoOpCache" value="false"/>
+    </bean>
+</beans>
+```
+
+- 使用
+
+```java
+
+    @Cacheable(value = "cache_emp", key = "#id")
+    @Override
+    public Emp selectById(Serializable id) {
+        return super.selectById(id);
+    }
+```

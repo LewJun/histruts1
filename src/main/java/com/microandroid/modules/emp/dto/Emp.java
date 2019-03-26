@@ -2,12 +2,14 @@ package com.microandroid.modules.emp.dto;
 
 import com.baomidou.mybatisplus.annotations.TableId;
 
+import java.io.Serializable;
+
 /**
  * @author LewJun
  * @version v0.1 2018/10/18 19:34 LewJun Exp $$
  */
 //@TableName
-public class Emp {
+public class Emp implements Serializable {
     @TableId
     private Integer empno;
 
