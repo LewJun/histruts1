@@ -63,7 +63,7 @@ public final class ApiResult<T> {
         return status;
     }
 
-    public void setStatus(ServiceStatus status) {
+    private void setStatus(ServiceStatus status) {
         this.status = status;
     }
 
