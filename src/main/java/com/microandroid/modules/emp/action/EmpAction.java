@@ -51,8 +51,7 @@ public class EmpAction extends BaseAppAction {
             throw new GlobalException("存在下属成员，不允许删除。");
         }
 
-        empService.deleteById(empno);
-        return MappingUtil.forward(mapping, "saveSuccess");
+        return MappingUtil.renderJson(response, empService.deleteById(empno));
     }
 
     public ActionForward index(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -82,7 +81,7 @@ public class EmpAction extends BaseAppAction {
         Emp emp = new Emp();
         BeanUtils.copyProperties(getForm(form), emp);
         empService.updateById(emp);
-        return MappingUtil.forward(mapping, "saveSuccess");
+        return MappingUtil.renderJson(response);
     }
 
     /**

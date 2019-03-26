@@ -32,7 +32,10 @@ public class MappingUtil {
         try {
             response.setContentType("application/json;charset=utf-8");
             writer = response.getWriter();
-            ApiResult<Object> apiResult = new ApiResult<>(data);
+            ApiResult<Object> apiResult = (data == null
+                    ? new ApiResult<>()
+                    : new ApiResult<>(data)
+            );
             Gson gson = new GsonBuilder()
                     .disableHtmlEscaping()
                     .serializeNulls()
@@ -50,5 +53,16 @@ public class MappingUtil {
         }
 
         return null;
+    }
+
+
+    /**
+     * 渲染json数据，不返回数据
+     *
+     * @param response 响应
+     * @return 使用response json数据
+     */
+    public static ActionForward renderJson(HttpServletResponse response) {
+        return renderJson(response, null);
     }
 }

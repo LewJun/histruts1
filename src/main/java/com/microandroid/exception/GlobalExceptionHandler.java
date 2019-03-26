@@ -25,7 +25,7 @@ import java.io.PrintWriter;
  * @version v0.1 2019/03/14 16:57 LewJun Exp $$
  */
 public class GlobalExceptionHandler extends ExceptionHandler {
-    private static final Logger LOGGER    = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(GlobalExceptionHandler.class);
     /**
      * ajax请求标志
      */
@@ -46,7 +46,7 @@ public class GlobalExceptionHandler extends ExceptionHandler {
             GlobalException ge = (GlobalException) ex;
             apiResult = ge.getResult();
             ServiceStatus status = apiResult.getStatus();
-            ret = status.getMsg();
+            if (status != null) ret = status.getMsg();
         }
 
         String xReqWith = request.getHeader("X-Requested-With");

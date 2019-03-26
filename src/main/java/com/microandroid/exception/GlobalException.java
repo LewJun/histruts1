@@ -27,7 +27,8 @@ public class GlobalException extends RuntimeException {
     }
 
     public GlobalException(String message, Throwable cause) {
-        this(ServiceStatus.EXCEPTION, null, message, cause);
+        setResult(new ApiResult(message));
+        LOGGER.error("【message={}, cause={}】", message, cause);
     }
 
     public GlobalException(ServiceStatus status, Object content, String message) {
@@ -47,11 +48,15 @@ public class GlobalException extends RuntimeException {
      */
     public GlobalException(ServiceStatus status, Object content, String message, Throwable cause) {
         super(message, cause);
-        result = new ApiResult(status, content);
+        setResult(new ApiResult(status, content));
         LOGGER.error("【status={}, content={}, message={}, cause={}】", status, content, message, cause);
     }
 
     public ApiResult getResult() {
         return result;
+    }
+
+    private void setResult(ApiResult result) {
+        this.result = result;
     }
 }

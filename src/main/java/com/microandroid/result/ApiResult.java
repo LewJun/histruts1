@@ -26,6 +26,10 @@ public final class ApiResult<T> {
         setStatus(status);
     }
 
+    public ApiResult(String msg) {
+        this(ServiceStatus.EXCEPTION.getCode(), msg);
+    }
+
     public ApiResult(ServiceStatus status) {
         this(status, null);
     }

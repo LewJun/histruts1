@@ -34,15 +34,20 @@ public class ReqlogFilter implements Filter {
         HttpServletRequest req = (HttpServletRequest) servletRequest;
         HttpServletResponse resp = (HttpServletResponse) servletResponse;
 
+        StringBuilder cookieStr = new StringBuilder("cookie:");
         Cookie[] cookies = req.getCookies();
         for (Cookie cookie : cookies) {
-            LOGGER.info("{} {} {} {}", cookie.getName(), cookie.getValue(), cookie.getPath(), cookie.getMaxAge());
+            cookieStr.append(String.format("%s %s %s %d %n", cookie.getName(), cookie.getValue(), cookie.getPath(), cookie.getMaxAge()));
         }
+        LOGGER.info(cookieStr.toString());
+
+        StringBuilder headerInfo = new StringBuilder();
         Enumeration headerNames = req.getHeaderNames();
         while (headerNames.hasMoreElements()) {
             String headerName = (String) headerNames.nextElement();
-            LOGGER.info("{}: {}", headerName, req.getHeader(headerName));
+            headerInfo.append(String.format("%s:%s%n", headerName, req.getHeader(headerName)));
         }
+        LOGGER.info(headerInfo.toString());
 
 
         filterChain.doFilter(req, resp);
