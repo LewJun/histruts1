@@ -54,7 +54,9 @@ public class GlobalExceptionHandler extends ExceptionHandler {
         if (AJAX_FLAG.equals(xReqWith)) {
             PrintWriter writer = null;
             try {
-                Gson gson = new GsonBuilder().create();
+                Gson gson = new GsonBuilder()
+                        .disableHtmlEscaping()
+                        .create();
                 ret = gson.toJson(apiResult);
                 LOGGER.info("ret:{}", ret);
                 response.setContentType("application/json;charset=utf-8");

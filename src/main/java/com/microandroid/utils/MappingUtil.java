@@ -38,7 +38,6 @@ public class MappingUtil {
             );
             Gson gson = new GsonBuilder()
                     .disableHtmlEscaping()
-                    .serializeNulls()
                     .create();
             String ret = gson.toJson(apiResult);
             LOGGER.info("ret:{}", ret);
