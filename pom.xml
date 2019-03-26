@@ -152,6 +152,17 @@
         </dependency>
         <!-- log end -->
 
+        <dependency>
+            <artifactId>commons-beanutils</artifactId>
+            <groupId>commons-beanutils</groupId>
+            <version>1.7.0</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>commons-logging</artifactId>
+                    <groupId>commons-logging</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
         <!--添加gson-->
         <dependency>
             <groupId>com.google.code.gson</groupId>
