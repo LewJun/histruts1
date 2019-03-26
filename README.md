@@ -1739,3 +1739,160 @@ public interface IEmpMapper extends BaseMapper<Emp> {
 }
 
 ```
+
+### 集成redis
+#### 添加依赖
+```xml
+<!--redis
+其它版本可能会出现java.lang.NoSuchMethodError: org.springframework.core.serializer.support.DeserializingConverter.<init>(Ljava/lang/ClassLoader;)V
+-->
+<dependency>
+    <groupId>org.springframework.data</groupId>
+    <artifactId>spring-data-redis</artifactId>
+    <version>1.4.2.RELEASE</version>
+</dependency>
+
+<dependency>
+    <groupId>redis.clients</groupId>
+    <artifactId>jedis</artifactId>
+    <version>2.6.2</version>
+</dependency>
+<!--redis end-->
+```
+
+#### 配置redis.properties
+
+```properties
+#redis.host=192.168.1.191, 192.168.26.200
+redis.host=${redis.host}
+redis.port=6379
+redis.timeout=3000
+redis.password=${redis.password}
+# select redis database test-env 0 publish-env 1
+redis.database=${redis.database}
+redis.pool.maxActive=${redis.pool.maxActive}
+redis.pool.maxIdle=${redis.pool.maxIdle}
+redis.pool.minIdle=${redis.pool.minIdle}
+redis.pool.maxWait=${redis.pool.maxWait}
+redis.pool.testOnBorrow=${redis.pool.testOnBorrow}
+redis.pool.testOnReturn=${redis.pool.testOnReturn}
+redis.pool.maxTotal=${redis.pool.maxTotal}
+redis.pool.blockWhenExhausted=${redis.pool.blockWhenExhausted}
+redis.pool.maxWaitMillis=${redis.pool.maxWaitMillis}
+```
+
+dev.properties
+
+```properties
+
+##########################################################
+#redis.host=192.168.1.191, 192.168.26.200
+redis.host=192.168.1.191
+redis.port=6379
+redis.timeout=3000
+redis.password=
+# select redis database test-env 0 publish-env 1
+redis.database=0
+redis.pool.maxActive=300
+redis.pool.maxIdle=20
+redis.pool.minIdle=5
+redis.pool.maxWait=3000
+# true开启后可能会出现Could not get a resource from the pool https://blog.csdn.net/only1994/article/details/52785306
+redis.pool.testOnBorrow=false
+redis.pool.testOnReturn=true
+redis.pool.maxTotal=6000
+redis.pool.blockWhenExhausted=true
+redis.pool.maxWaitMillis=1000
+##########################################################
+
+```
+
+#### 配置spring-redis.xml
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+    <!-- 自动扫描(自动注入)，扫描这个包以及它的子包的所有使用注解标注的类 -->
+    <context:component-scan base-package="com.microandroid.cache.redis"/>
+
+    <!-- jedis 配置 -->
+    <bean id="poolConfig" class="redis.clients.jedis.JedisPoolConfig">
+        <property name="minIdle" value="${redis.pool.minIdle}"/>
+        <!-- 最大空闲数 -->
+        <property name="maxIdle" value="${redis.pool.maxIdle}"/>
+        <!-- 最大空连接数 -->
+        <property name="maxTotal" value="${redis.pool.maxTotal}"/>
+        <!-- 最大等待时间 -->
+        <property name="maxWaitMillis" value="${redis.pool.maxWaitMillis}"/>
+        <!-- 连接超时时是否阻塞，false时报异常,ture阻塞直到超时, 默认true -->
+        <property name="blockWhenExhausted" value="${redis.pool.blockWhenExhausted}"/>
+        <!-- 返回连接时，检测连接是否成功 -->
+        <property name="testOnBorrow" value="${redis.pool.testOnBorrow}"/>
+    </bean>
+
+    <!-- redis服务器中心 -->
+    <bean id="connectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">
+        <!-- IP地址 -->
+        <property name="hostName" value="${redis.host}"/>
+        <!-- 端口号 -->
+        <property name="port" value="${redis.port}"/>
+        <!-- 密码 -->
+        <property name="password" value="${redis.password}"/>
+        <!-- 超时时间 默认2000-->
+        <property name="timeout" value="${redis.timeout}"/>
+        <!-- usePool：是否使用连接池 -->
+        <property name="usePool" value="true"/>
+        <!-- 连接池配置引用 -->
+        <property name="poolConfig" ref="poolConfig"/>
+    </bean>
+
+    <!-- redis操作模板，面向对象的模板 -->
+    <bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate">
+        <property name="connectionFactory" ref="connectionFactory"/>
+        <property name="keySerializer">
+            <bean class="org.springframework.data.redis.serializer.StringRedisSerializer"/>
+        </property>
+        <property name="valueSerializer">
+            <bean class="org.springframework.data.redis.serializer.JdkSerializationRedisSerializer"/>
+        </property>
+        <property name="hashKeySerializer">
+            <bean class="org.springframework.data.redis.serializer.StringRedisSerializer"/>
+        </property>
+        <property name="hashValueSerializer">
+            <bean class="org.springframework.data.redis.serializer.JdkSerializationRedisSerializer"/>
+        </property>
+        <!--开启事务  -->
+        <property name="enableTransactionSupport" value="true"/>
+    </bean>
+</beans>
+
+```
+
+#### 添加RedisCacheManager.java
+
+```java
+@Autowired
+    private RedisTemplate<String, Object> redisTemplate;
+
+    /**
+     * 指定缓存失效时间
+     *
+     * @param key  键
+     * @param time 时间(秒)
+     * @return
+     */
+    public boolean expire(String key, long time) {
+        try {
+            if (time > 0) {
+                redisTemplate.expire(key, time, TIMEUNIT);
+            }
+```
+
+#### 使用
+    @Autowired
+    private RedisCacheManager redisCacheManager;
+    redisCacheManager.hasKey("key")

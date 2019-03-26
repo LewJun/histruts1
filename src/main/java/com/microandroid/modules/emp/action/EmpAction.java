@@ -1,6 +1,7 @@
 package com.microandroid.modules.emp.action;
 
 import com.microandroid.base.BaseAppAction;
+import com.microandroid.cache.redis.RedisCacheManager;
 import com.microandroid.exception.GlobalException;
 import com.microandroid.modules.emp.dto.Emp;
 import com.microandroid.modules.emp.form.EmpForm;
@@ -27,6 +28,9 @@ public class EmpAction extends BaseAppAction {
 
     @Autowired
     private IEmpService empService;
+
+    @Autowired
+    private RedisCacheManager redisCacheManager;
 
     /**
      * 得到form
@@ -58,6 +62,7 @@ public class EmpAction extends BaseAppAction {
         LOGGER.info("index");
         List<Emp> empList = empService.selectList(null);
         LOGGER.info("{}", empList);
+        LOGGER.info("read from redis {}", redisCacheManager.hasKey("key"));
         request.setAttribute("empList", empList);
         return MappingUtil.forward(mapping, "index");
     }
