@@ -15,4 +15,11 @@ public interface IEmpService extends IService<Emp> {
      * @return
      */
     List<Emp> selectSubEmpByPrimaryKey(Serializable pk);
+
+    /**
+     * 获取所有emp
+     *
+     * @return
+     */
+    List<Emp> selectList();
 }

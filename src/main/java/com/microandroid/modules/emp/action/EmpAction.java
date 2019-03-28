@@ -60,7 +60,7 @@ public class EmpAction extends BaseAppAction {
 
     public ActionForward index(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         LOGGER.info("index");
-        List<Emp> empList = empService.selectList(null);
+        List<Emp> empList = empService.selectList();
         LOGGER.info("{}", empList);
         LOGGER.info("read from redis {}", redisCacheManager.hasKey("key"));
         request.setAttribute("empList", empList);
@@ -105,7 +105,7 @@ public class EmpAction extends BaseAppAction {
     public ActionForward getEmpList(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         LOGGER.info("getEmpList");
 
-        return MappingUtil.renderJson(response, empService.selectList(null));
+        return MappingUtil.renderJson(response, empService.selectList());
     }
 
 }
