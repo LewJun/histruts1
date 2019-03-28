@@ -36,7 +36,7 @@ $(function () {
             },
             dataType: "text/json",
             timeout: 5000,
-            async: false,
+            // async: false,// async: false时当Ajax请求发生错误的时候，会导致error执行两次
             beforeSend: function () {
                 console.log('before send')
             },
