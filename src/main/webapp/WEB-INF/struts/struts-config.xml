@@ -48,6 +48,16 @@
             <forward name="edit" path="/WEB-INF/views/emp/edit.jsp"/>
             <forward name="mockException" path="/empAction.do?method=index"/>
         </action>
+
+        <action path="/loginAction"
+                type="org.springframework.web.struts.DelegatingActionProxy"
+                parameter="method"
+                scope="request"
+        >
+            <forward name="index" path="/WEB-INF/views/login/login.jsp"/>
+            <forward name="success" path="/empAction.do?method=index" redirect="true"/>
+            <forward name="logout" path="/WEB-INF/views/login/login.jsp"/>
+        </action>
     </action-mappings>
 
     <!--依赖资源文件，做国际化-->

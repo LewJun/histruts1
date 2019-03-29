@@ -12,6 +12,7 @@
 <body>
 <h1>/</h1>
 <a class="w3-btn w3-green w3-hover-blue" href="empAction.do?method=index">Emp</a>
+<a class="w3-btn w3-green w3-hover-blue" href="loginAction.do?method=index">login</a>
 <script src="${pageContext.request.contextPath}/static/plugins/w3/w3.js"></script>
 </body>
 </html>

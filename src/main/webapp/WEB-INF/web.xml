@@ -86,7 +86,10 @@
     <!-- 连接池 启用 Web 监控统计功能    end
     访问监控页面: http://ip:port/projectName/druid/index.html
     -->
-
+    <!-- session超时定义,单位为分钟 -->
+    <session-config>
+        <session-timeout>1</session-timeout>
+    </session-config>
     <!--配置404页面-->
     <error-page>
         <error-code>404</error-code>
