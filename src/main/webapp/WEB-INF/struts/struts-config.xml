@@ -6,6 +6,7 @@
 <struts-config>
     <form-beans>
         <form-bean name="empForm" type="com.microandroid.modules.emp.form.EmpForm"/>
+        <form-bean name="loginForm" type="com.microandroid.modules.login.form.LoginForm"/>
     </form-beans>
 
     <!--全局异常处理器
@@ -51,12 +52,12 @@
 
         <action path="/loginAction"
                 type="org.springframework.web.struts.DelegatingActionProxy"
+                name="loginForm"
                 parameter="method"
                 scope="request"
         >
-            <forward name="index" path="/WEB-INF/views/login/login.jsp"/>
+            <forward name="login" path="/login.jsp"/>
             <forward name="success" path="/empAction.do?method=index" redirect="true"/>
-            <forward name="logout" path="/WEB-INF/views/login/login.jsp"/>
         </action>
     </action-mappings>
 

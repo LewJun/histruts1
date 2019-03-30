@@ -34,6 +34,9 @@ public class ReqlogFilter implements Filter {
         HttpServletRequest req = (HttpServletRequest) servletRequest;
         HttpServletResponse resp = (HttpServletResponse) servletResponse;
 
+//        getServletPath getRequestURI
+        LOGGER.info("getServletPath: {}", req.getServletPath());
+        LOGGER.info("{} {}?{}", req.getMethod(), req.getRequestURI(), req.getQueryString());
         StringBuilder cookieStr = new StringBuilder("cookie:");
         Cookie[] cookies = req.getCookies();
         for (Cookie cookie : cookies) {

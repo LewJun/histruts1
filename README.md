@@ -2172,3 +2172,176 @@ public class EmpServiceImpl extends ServiceImpl<IEmpMapper, Emp> implements IEmp
 **注意**
 * quartz 需要spring-context-support 3.x版本的依赖支持
 * 为了避免dependency依赖其它版本的spring，因此需要使用exclusion进行排除。
+
+
+### 实现登录功能
+
+#### login.jsp
+
+* webapp/login.jsp
+
+```html
+<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Emp</title>
+    <%--jsp获取项目名称 pageContext.request.contextPath--%>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/plugins/w3/w3.css"/>
+</head>
+<body>
+<div class="w3-container w3-center">
+    <h1>User Login</h1>
+    <form name="loginForm" action="loginAction.do?method=login" method="POST">
+        <input type="text" name="username" placeholder="Type User Name">
+        <input type="password" name="password" placeholder="Type User Pwd">
+        <button value="Submit" type="submit" class="w3-btn w3-green">Submit</button>
+    </form>
+</div>
+
+<script src="${pageContext.request.contextPath}/static/plugins/jq/1.3.2/jquery.min.js"></script>
+</body>
+</html>
+
+```
+
+* web.xml
+
+配置welcome-file
+
+```xml
+<welcome-file-list>
+    <welcome-file>login.jsp</welcome-file>
+</welcome-file-list>
+```
+
+#### 登录/退出
+
+* LoginAction.java
+
+```java
+@Controller("/loginAction")
+public class LoginAction extends BaseAppAction {
+
+    /**
+     * 登录
+     */
+    public ActionForward login(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                               HttpServletResponse response) throws Exception {
+        LOGGER.info("login");
+        HttpSession session = request.getSession();
+        LoginForm loginForm = (LoginForm) form;
+        session.setAttribute("loginUser",loginForm);
+        return MappingUtil.forward(mapping, "success");
+    }
+
+    /**
+     * 退出
+     */
+    public ActionForward logout(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                HttpServletResponse response) throws Exception {
+        LOGGER.info("logout");
+        HttpSession session = request.getSession();
+        session.invalidate();
+        return MappingUtil.forward(mapping, "login");
+    }
+}
+```
+
+> 登录关键代码：登录成功后，往`session`中添加属性loginUser，并跳转到成功后的视图页面
+> 退出关键代码：将`session`设置为不可用，`session.invalidate();`，并跳转到登录页面
+
+* LoginForm.java
+
+```java
+public class LoginForm extends ActionForm {
+    public String username;
+
+    public String password;
+}
+```
+
+#### struts-config配置loginAction
+```xml
+<action path="/loginAction"
+        type="org.springframework.web.struts.DelegatingActionProxy"
+        name="loginForm"
+        parameter="method"
+        scope="request">
+    <forward name="login" path="/login.jsp"/>
+    <forward name="success" path="/empAction.do?method=index" redirect="true"/>
+</action>
+```
+
+注意配置success对应的path，redirect=true
+
+#### 配置登录过滤器
+
+作用：如果访问资源的时候，没有登录，则跳转到`login.jsp`页面，否则就跳转到资源。
+
+```java
+/**
+ * 登录过滤器
+ */
+public class LoginFilter implements Filter {
+    private List<String> exclusions;
+
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+        String exclusionsStr = filterConfig.getInitParameter("exclusions");
+        this.exclusions = exclusionsStr != null ? Arrays.asList(exclusionsStr.split(",")) : null;
+    }
+
+    @Override
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+        HttpServletRequest req = (HttpServletRequest) servletRequest;
+        HttpServletResponse resp = (HttpServletResponse) servletResponse;
+
+        if (exclusions != null && exclusions.size() > 0) {
+            String servletPath = req.getServletPath();
+            if (!exclusions.contains(servletPath)) {
+                // 得到session，如果没有则不要创建，默认是true创建
+                HttpSession session = req.getSession();
+
+                if (session == null || session.getAttribute("loginUser") == null) {
+                    req.getRequestDispatcher("/login.jsp").forward(req, resp);
+                    return;
+                }
+            }
+        }
+        filterChain.doFilter(req, resp);
+    }
+
+    @Override
+    public void destroy() {
+
+    }
+}
+```
+
+> 关键代码：session == null || session.getAttribute("loginUser") == null
+> exclusions的作用是排除不需要登录验证的资源
+
+web.xml
+
+```xml
+    <!--登录过滤器-->
+    <filter>
+        <filter-name>com.microandroid.filters.LoginFilter</filter-name>
+        <filter-class>com.microandroid.filters.LoginFilter</filter-class>
+        <init-param>
+            <param-name>exclusions</param-name>
+            <param-value>/loginAction.do, /indexAction.do</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>com.microandroid.filters.LoginFilter</filter-name>
+        <url-pattern>*.do</url-pattern>
+    </filter-mapping>
+```
+

@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.microandroid.exception.GlobalException;
 import com.microandroid.result.ApiResult;
+import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.slf4j.Logger;
@@ -15,6 +16,14 @@ import java.io.PrintWriter;
 
 public class MappingUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(MappingUtil.class);
+
+
+    /**
+     * 得到form
+     */
+    private <T extends ActionForm> T getForm(ActionForm form) {
+        return (T) form;
+    }
 
     public static ActionForward forward(ActionMapping mapping, String forwardName) {
         return mapping.findForward(forwardName);

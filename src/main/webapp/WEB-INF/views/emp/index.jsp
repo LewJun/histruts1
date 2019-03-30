@@ -18,7 +18,7 @@
     <a class="w3-bar-item w3-button" href="empAction.do?method=mockException">Mock Exception</a>
     <a class="w3-bar-item w3-button" href="javascript:void(0);" id="mockExAjax">Mock Exception Ajax</a>
     <a class="w3-bar-item w3-button" href="javascript:void(0);" id="getEmpListByAjax">getEmpListByAjax</a>
-
+    <a class="w3-bar-item w3-button" href="loginAction.do?method=logout">logout</a>
 </div>
 <table class="w3-table-all">
     <tbody>
