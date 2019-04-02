@@ -1,6 +1,9 @@
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.config.IniSecurityManagerFactory;
+import org.apache.shiro.crypto.SecureRandomNumberGenerator;
+import org.apache.shiro.crypto.hash.Md5Hash;
+import org.apache.shiro.crypto.hash.SimpleHash;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.Factory;
@@ -68,5 +71,23 @@ public class ShiroTest {
             // 验证错误
             return false;
         }
+    }
+
+    @Test
+    public void testCrypto1() {
+        String pwd = "1";
+        String encodedPwd = new Md5Hash(pwd).toString();
+        System.out.println(encodedPwd);
+    }
+
+    @Test
+    public void testCrypto2() {
+        String pwd = "abcde";
+        String salt = new SecureRandomNumberGenerator().nextBytes().toString();
+        System.out.println(salt);
+        int times = 2;
+        String algorithmName = "md5";
+        String encodedPwd = new SimpleHash(algorithmName, pwd, salt, times).toString();
+        System.out.println(encodedPwd);
     }
 }

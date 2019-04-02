@@ -1,6 +1,7 @@
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
+import org.apache.shiro.crypto.hash.SimpleHash;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.slf4j.Logger;
@@ -72,8 +73,10 @@ public class DbRealm extends AuthorizingRealm {
         UserDao userDao = new UserDao();
 //        在数据库查询是否有该用户
         User user = userDao.queryByUsername(username);
+
 //        如果没有查询到用户名对应的用户或者比较密码错误，抛出异常登录失败
-        if (user == null || !password.equals(user.password)) {
+//        把用户通过 UsernamePasswordToken 传进来的密码，以及数据库里取出来的 salt 进行加密，加密之后再与数据库里的密文进行比较，判断用户是否能够通过验证。
+        if (user == null || !user.password.equals(new SimpleHash("md5", password, user.salt, 2).toString())) {
             throw new AuthenticationException("login error");
         }
 

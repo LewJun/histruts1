@@ -6,6 +6,8 @@ public class User {
 
     public String password;
 
+    public String salt;
+
     public User() {
     }
 
@@ -13,11 +15,6 @@ public class User {
         this();
         this.username = username;
         this.password = password;
-    }
-
-    public User(Integer id, String username, String password) {
-        this(username, password);
-        this.id = id;
     }
 
     public Integer getId() {
@@ -44,12 +41,21 @@ public class User {
         this.password = password;
     }
 
+    public String getSalt() {
+        return salt;
+    }
+
+    public void setSalt(String salt) {
+        this.salt = salt;
+    }
+
     @Override
     public String toString() {
         return "User{" +
                 "id=" + id +
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
+                ", salt='" + salt + '\'' +
                 '}';
     }
 }
