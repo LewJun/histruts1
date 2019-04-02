@@ -346,6 +346,15 @@
             <version>1.4.0</version>
         </dependency>
         <!--shiro end-->
+
+        <!--dbutils start-->
+        <dependency>
+            <groupId>commons-dbutils</groupId>
+            <artifactId>commons-dbutils</artifactId>
+            <version>1.7</version>
+        </dependency>
+        <!--dbutils end-->
+
     </dependencies>
 
     <!-- 环境管理 -->
