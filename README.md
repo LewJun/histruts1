@@ -2835,3 +2835,60 @@ public class DbUtilsTest {
 }
 
 ```
+
+### 密码加salt
+#### 方式1
+存储密码的时候，就生成salt并对密码进行加密同时保存到数据库
+在DbRealm中登录验证时，将用户传递过来的密码使用数据库中查询出的salt进行加密再和数据库中的密码进行对比，判断是否能登录。
+
+关键Java代码
+```java
+//
+////        如果没有查询到用户名对应的用户或者比较密码错误，抛出异常登录失败
+////        把用户通过 UsernamePasswordToken 传进来的密码，以及数据库里取出来的 salt 进行加密，加密之后再与数据库里的密文进行比较，判断用户是否能够通过验证。
+//        if (user == null || !user.password.equals(new SimpleHash("md5", password, user.salt, 2).toString())) {
+//            throw new AuthenticationException("login error");
+//        }
+//
+//        return new SimpleAuthenticationInfo(username, password, getName());
+```
+
+#### 方式2 
+改shiro.ini：
+为DbRealm 指定credentialsMatcher，其中就指定了算法是 md5, 次数为2， storedCredentialsHexEncoded 这个表示计算之后以密文为16进制。
+
+这样Shiro就拿着在subject.login() 时传入的UsernamePasswordToken 中的源密码， 数据库里的密文和盐巴，以及配置文件里指定的算法参数，自己去进行相关匹配了。
+
+shiro.ini
+
+```ini
+[main]
+#为DbRealm 指定credentialsMatcher，
+#其中就指定了算法是 md5, 次数为2， storedCredentialsHexEncoded 这个表示计算之后以密文为16进制。
+credentialsMatcher=org.apache.shiro.authc.credential.HashedCredentialsMatcher
+credentialsMatcher.hashAlgorithmName=md5
+credentialsMatcher.hashIterations=2
+credentialsMatcher.storedCredentialsHexEncoded=true
+
+databaseRealm=DbRealm
+databaseRealm.credentialsMatcher=$credentialsMatcher
+securityManager.realms=$databaseRealm
+```
+
+DbRealm.java
+```java
+protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
+        LOGGER.info("2 doGetAuthenticationInfo");
+        UsernamePasswordToken usernamePasswordToken = (UsernamePasswordToken) authenticationToken;
+        String username = usernamePasswordToken.getPrincipal().toString();
+        UserDao userDao = new UserDao();
+//        在数据库查询是否有该用户
+        User user = userDao.queryByUsername(username);
+//        通过shiro.ini里配置的 HashedCredentialsMatcher 进行自动校验
+        return new SimpleAuthenticationInfo(username, user.password, ByteSource.Util.bytes(user.salt), getName());
+    }
+```
+
+
+
+
