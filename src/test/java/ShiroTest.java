@@ -14,9 +14,10 @@ public class ShiroTest {
     @Test
     public void testShiro() {
         List<User> userList = new ArrayList<>();
-        userList.add(new User("zhang3", "123456"));
-        userList.add(new User("li4", "123456"));
+        userList.add(new User("zhang3", "12345"));
+        userList.add(new User("li4", "abcde"));
         userList.add(new User("wang5", "123456"));
+        userList.add(new User("zs", "123"));
         for (User user : userList) {
             Subject subject = getSubject();
             // 如果登录成功

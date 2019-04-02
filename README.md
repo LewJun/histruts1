@@ -2547,6 +2547,195 @@ INSERT INTO `role_permission` VALUES (3,9);
 INSERT INTO `role_permission` VALUES (3,10);
 ```
 
+#### 继承AuthorizingRealm获取登录信息和权限角色信息
+
+```java
+import org.apache.shiro.authc.*;
+import org.apache.shiro.authz.AuthorizationInfo;
+import org.apache.shiro.authz.SimpleAuthorizationInfo;
+import org.apache.shiro.realm.AuthorizingRealm;
+import org.apache.shiro.subject.PrincipalCollection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+// 这个类，用户提供，但是不由用户自己调用，而是由 Shiro 去调用（需要在shiro.ini中配置）。 就像Servlet的doPost方法，是被Tomcat调用一样。
+public class DbRealm extends AuthorizingRealm {
+    private static final Logger LOGGER = LoggerFactory.getLogger(DbRealm.class);
+
+    /**
+     * 得到用户的角色权限信息
+     *
+     * @param principalCollection
+     * @return
+     */
+    @Override
+    protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
+        LOGGER.info("1 doGetAuthorizationInfo");
+        // 能进入表示账号已经通过验证了
+        String username = (String) principalCollection.getPrimaryPrincipal();
+        LOGGER.info("username:{}", username);
+
+        UserDao userDao = new UserDao();
+        List<Role> roles = userDao.queryRolesByUsername(username);
+        Set<String> roleSet = new HashSet<>();
+        for (Role role : roles) {
+            roleSet.add(role.name);
+        }
+
+        List<Permission> permissions = userDao.queryPermissionsByUsernae(username);
+        Set<String> permissionSet = new HashSet<>();
+        for (Permission p : permissions) {
+            permissionSet.add(p.name);
+        }
+
+        SimpleAuthorizationInfo simpleAuthorizationInfo = new SimpleAuthorizationInfo();
+//        把角色放进去
+        if (!roleSet.isEmpty()) simpleAuthorizationInfo.setRoles(roleSet);
+//        把权限放进去
+        if (!permissionSet.isEmpty()) simpleAuthorizationInfo.setStringPermissions(permissionSet);
+        return simpleAuthorizationInfo;
+    }
+
+    /**
+     * 得到验证通过的用户信息
+     *
+     * @param authenticationToken
+     * @return
+     * @throws AuthenticationException
+     */
+    @Override
+    protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
+        LOGGER.info("2 doGetAuthenticationInfo");
+        UsernamePasswordToken usernamePasswordToken = (UsernamePasswordToken) authenticationToken;
+        String username = usernamePasswordToken.getPrincipal().toString();
+        String password = new String(usernamePasswordToken.getPassword());
+
+        LOGGER.info("username:{}, password:{}", username, password);
+        UserDao userDao = new UserDao();
+//        在数据库查询是否有该用户
+        User user = userDao.queryByUsername(username);
+//        如果没有查询到用户名对应的用户或者比较密码错误，抛出异常登录失败
+        if (user == null || !password.equals(user.password)) {
+            throw new AuthenticationException("login error");
+        }
+
+        return new SimpleAuthenticationInfo(username, password, getName());
+    }
+}
+
+```
+
+#### shiro.ini配置DbRealm
+```ini
+[main]
+databaseRealm=DbRealm
+securityManager.realms=$databaseRealm
+```
+
+#### UserDao
+主要是同数据库操作有关的方法
+```java
+import com.microandroid.utils.DbUtils2;
+import org.apache.commons.dbutils.DbUtils;
+import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.dbutils.handlers.BeanHandler;
+import org.apache.commons.dbutils.handlers.BeanListHandler;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.List;
+
+public class UserDao {
+    /**
+     * 根据用户名查找用户信息
+     *
+     * @param username
+     * @return
+     */
+    public User queryByUsername(String username) {
+        Connection sqliteConn = null;
+        try {
+            sqliteConn = DbUtils2.getSqliteConn();
+
+            QueryRunner queryRunner = new QueryRunner();
+            User user = queryRunner.query(sqliteConn, "select * from user where username=?", new BeanHandler<>(User.class), username);
+            return user;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                DbUtils.close(sqliteConn);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
+    public List<Role> queryRolesByUsername(String username) {
+        Connection sqliteConn = null;
+        try {
+            sqliteConn = DbUtils2.getSqliteConn();
+
+            String sql = "select r.* from user u \n" +
+                    "left join user_role ur on u.id = ur.id_user\n" +
+                    "left join role r on r.id = ur.id_role\n" +
+                    "where u.username=?";
+            QueryRunner queryRunner = new QueryRunner();
+            return queryRunner.query(sqliteConn, sql, new BeanListHandler<>(Role.class), username);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                DbUtils.close(sqliteConn);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
+    public List<Permission> queryPermissionsByUsernae(String username) {
+        Connection sqliteConn = null;
+        try {
+            sqliteConn = DbUtils2.getSqliteConn();
+
+            String sql = "select p.* from user u \n" +
+                    "left join user_role ur on u.id = ur.id_user\n" +
+                    "left join role r on r.id = ur.id_role\n" +
+                    "left join role_permission rp on r.id = rp.id_role\n" +
+                    "left join permission p on p.id = rp.id_permission\n" +
+                    "where u.username=?";
+            QueryRunner queryRunner = new QueryRunner();
+            return queryRunner.query(sqliteConn, sql, new BeanListHandler<>(Permission.class), username);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                DbUtils.close(sqliteConn);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+}
+
+
+class User{id, username, password}
+class Role{id, name}
+class Permission {id, name}
+class UserRole{id_user, id_role}
+class RolePermission{id_role, id_permission}
+```
+
+#### 运行ShiroTest.java
+不需要改动任何即可运行
+
 ### DbUtils的使用
 
 #### 添加依赖
