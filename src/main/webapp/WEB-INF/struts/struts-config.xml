@@ -22,7 +22,7 @@
 
     <!--全局跳转-->
     <global-forwards>
-        <forward name="global-index" path="/WEB-INF/index.jsp"/>
+        <forward name="login" path="/login.jsp"/>
     </global-forwards>
 
     <action-mappings>
@@ -52,11 +52,10 @@
 
         <action path="/loginAction"
                 type="org.springframework.web.struts.DelegatingActionProxy"
-                name="loginForm"
                 parameter="method"
+                name="loginForm"
                 scope="request"
         >
-            <forward name="login" path="/login.jsp"/>
             <forward name="success" path="/empAction.do?method=index" redirect="true"/>
         </action>
     </action-mappings>

@@ -3,6 +3,10 @@ package com.microandroid.modules.login.action;
 import com.microandroid.base.BaseAppAction;
 import com.microandroid.modules.login.form.LoginForm;
 import com.microandroid.utils.MappingUtil;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.session.Session;
+import org.apache.shiro.subject.Subject;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -10,7 +14,6 @@ import org.springframework.stereotype.Controller;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 /**
  * @author LewJun
@@ -19,27 +22,23 @@ import javax.servlet.http.HttpSession;
 @Controller("/loginAction")
 public class LoginAction extends BaseAppAction {
 
-    /**
-     * 登录
-     */
     public ActionForward login(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                HttpServletResponse response) throws Exception {
         LOGGER.info("login");
-        HttpSession session = request.getSession();
         LoginForm loginForm = (LoginForm) form;
-        session.setAttribute("loginUser", loginForm);
+        Subject subject = SecurityUtils.getSubject();
+        UsernamePasswordToken token = new UsernamePasswordToken(loginForm.getUsername(), loginForm.getPassword());
+        try {
+            subject.login(token);
+            if (subject.isAuthenticated()) {
+                Session session = subject.getSession();
+                session.setAttribute("subject", subject);
+            }
+        } catch (Exception e) {
+            LOGGER.error("出现异常：", e);
+            return MappingUtil.forward(mapping, "login");
+        }
         return MappingUtil.forward(mapping, "success");
-    }
-
-    /**
-     * 退出
-     */
-    public ActionForward logout(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                HttpServletResponse response) throws Exception {
-        LOGGER.info("logout");
-        HttpSession session = request.getSession();
-        session.invalidate();
-        return MappingUtil.forward(mapping, "login");
     }
 
 }

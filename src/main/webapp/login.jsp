@@ -15,8 +15,8 @@
 <div class="w3-container w3-center">
     <h1>User Login</h1>
     <form name="loginForm" action="loginAction.do?method=login" method="POST">
-        <input type="text" name="username" placeholder="Type User Name">
-        <input type="password" name="password" placeholder="Type User Pwd">
+        <input type="text" name="username" placeholder="Type your Name">
+        <input type="password" name="password" placeholder="Type your Pwd">
         <button value="Submit" type="submit" class="w3-btn w3-green">Submit</button>
     </form>
 </div>

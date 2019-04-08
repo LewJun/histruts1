@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="shiro" uri="http://shiro.apache.org/tags" %>
 <!doctype html>
 <html>
 <head>
@@ -12,13 +13,17 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/plugins/w3/w3.css"/>
 </head>
 <body>
+<shiro:authenticated>
+    你好，${subject.principal}
+    <a class="w3-button" href="doLogout">logout</a>
+</shiro:authenticated>
 <h1>Emp Manage</h1>
 <div class="w3-bar">
     <a class="w3-bar-item w3-button" href="empAction.do?method=add">Add Emp</a>
     <a class="w3-bar-item w3-button" href="empAction.do?method=mockException">Mock Exception</a>
     <a class="w3-bar-item w3-button" href="javascript:void(0);" id="mockExAjax">Mock Exception Ajax</a>
     <a class="w3-bar-item w3-button" href="javascript:void(0);" id="getEmpListByAjax">getEmpListByAjax</a>
-    <a class="w3-bar-item w3-button" href="loginAction.do?method=logout">logout</a>
+    <a class="w3-bar-item w3-button" href="doLogout">logout</a>
 </div>
 <table class="w3-table-all">
     <tbody>

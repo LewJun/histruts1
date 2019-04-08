@@ -2890,5 +2890,135 @@ protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authent
 ```
 
 
+### struts集成shiro
+#### 添加依赖
+```xml
+        <!--shiro-->
+        <dependency>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-all</artifactId>
+            <version>1.4.0</version>
+        </dependency>
+```
+
+#### 配置shiro.ini
+```ini
+[main]
+#当访问需要验证的页面，但是又没有验证的情况下，跳转到login.jsp
+authc.loginUrl=/login.jsp
+#当访问需要角色的页面，但是又不拥有这个角色的情况下，跳转到noroles.jsp
+roles.unauthorizedUrl=/noRoles.jsp
+#当访问需要权限的页面，但是又不拥有这个权限的情况下，跳转到noperms.jsp
+perms.unauthorizedUrl=/noPerms.jsp
+
+#users，roles和perms都通过前面知识点的数据库配置了
+[users]
+z3=3,admin
+l4=4,productManager
+w5=5,OrderManager
+
+[roles]
+#管理员什么都能做
+admin=*
+#产品经理只能做产品管理
+productManager=addProduct,deleteProduct,editProduct,updateProduct,listProduct
+#订单经理只能做订单管理
+orderManager=addOrder,deleteOrder,editOrder,updateOrder,listOrder
+
+#urls用来指定哪些资源需要什么对应的授权才能使用
+[urls]
+/static/**=anon
+#登录不需要权限认证拦截
+/loginAction.do**=anon
+#doLogout地址就会进行退出行为
+/doLogout=logout
+#login.jsp,noroles.jsp,noperms.jsp 可以匿名访问
+/login.jsp=anon
+/noroles.jsp=anon
+/noperms.jsp=anon
+
+#除以上url规则，需要登录后才可以查看
+/**=authc
+```
+
+#### 配置web.xml
+
+```xml
+
+    <!--shiro配置开始-->
+    <listener>
+        <listener-class>org.apache.shiro.web.env.EnvironmentLoaderListener</listener-class>
+    </listener>
+    <context-param>
+        <param-name>shiroEnvironmentClass</param-name>
+        <param-value>org.apache.shiro.web.env.IniWebEnvironment
+        </param-value><!-- 默认先从/WEB-INF/shiro.ini，如果没有找classpath:shiro.ini -->
+    </context-param>
+    <context-param>
+        <param-name>shiroConfigLocations</param-name>
+        <param-value>classpath:conf/shiro.ini</param-value>
+    </context-param>
+    <filter>
+        <filter-name>shiroFilter</filter-name>
+        <filter-class>org.apache.shiro.web.servlet.ShiroFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>shiroFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    <!--shiro配置结束-->
+
+```
+
+#### loginAction 配置
+
+```java
+public class LoginForm extends ActionForm {
+    private String username;
+
+    private String password;
+}
+```
+
+```java
+@Controller("/loginAction")
+public class LoginAction extends BaseAppAction {
+
+    public ActionForward login(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                               HttpServletResponse response) throws Exception {
+        LOGGER.info("login");
+        LoginForm loginForm = (LoginForm) form;
+        Subject subject = SecurityUtils.getSubject();
+        UsernamePasswordToken token = new UsernamePasswordToken(loginForm.getUsername(), loginForm.getPassword());
+        try {
+            subject.login(token);
+            if (subject.isAuthenticated()) {
+                Session session = subject.getSession();
+                session.setAttribute("subject", subject);
+            }
+        } catch (Exception e) {
+            LOGGER.error("出现异常：", e);
+            return MappingUtil.forward(mapping, "login");
+        }
+        return MappingUtil.forward(mapping, "success");
+    }
+
+}
+```
+
+```xml
+<form-bean name="loginForm" type="com.microandroid.modules.login.form.LoginForm"/>
+<action path="/loginAction"
+        type="org.springframework.web.struts.DelegatingActionProxy"
+        parameter="method"
+        name="loginForm"
+        scope="request"
+>
+    <forward name="success" path="/empAction.do?method=index" redirect="true"/>
+</action>
+```
+
+
+
 
 
