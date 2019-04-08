@@ -15,4 +15,5 @@
     <import resource="spring-scheduler-greet.xml"/>
     <import resource="spring-scheduler-print.xml"/>
     <import resource="spring-redis.xml"/>
+    <import resource="spring-shiro.xml"/>
 </beans>

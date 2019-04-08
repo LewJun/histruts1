@@ -27,7 +27,12 @@ public class LoginAction extends BaseAppAction {
         LOGGER.info("login");
         LoginForm loginForm = (LoginForm) form;
         Subject subject = SecurityUtils.getSubject();
-        UsernamePasswordToken token = new UsernamePasswordToken(loginForm.getUsername(), loginForm.getPassword());
+        UsernamePasswordToken token = new UsernamePasswordToken(
+                loginForm.getUsername(),
+                loginForm.getPassword(),
+                loginForm.isRememberMe()
+        );
+
         try {
             subject.login(token);
             if (subject.isAuthenticated()) {

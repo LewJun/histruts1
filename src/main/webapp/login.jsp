@@ -17,6 +17,9 @@
     <form name="loginForm" action="loginAction.do?method=login" method="POST">
         <input type="text" name="username" placeholder="Type your Name">
         <input type="password" name="password" placeholder="Type your Pwd">
+        <label>
+            <input type="checkbox" name="rememberMe">记住我
+        </label>
         <button value="Submit" type="submit" class="w3-btn w3-green">Submit</button>
     </form>
 </div>

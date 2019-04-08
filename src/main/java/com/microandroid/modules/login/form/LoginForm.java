@@ -7,14 +7,14 @@ public class LoginForm extends ActionForm {
 
     private String password;
 
-    public LoginForm() {
-        super();
+    private boolean rememberMe;
+
+    public boolean isRememberMe() {
+        return rememberMe;
     }
 
-    public LoginForm(String username, String password) {
-        this();
-        this.username = username;
-        this.password = password;
+    public void setRememberMe(boolean rememberMe) {
+        this.rememberMe = rememberMe;
     }
 
     public String getUsername() {
