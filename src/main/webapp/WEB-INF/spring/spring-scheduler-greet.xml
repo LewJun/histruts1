@@ -18,8 +18,8 @@
     <bean id="cronTriggerGreet"
           class="org.springframework.scheduling.quartz.CronTriggerBean">
         <property name="jobDetail" ref="schedulerJobGreet"/>
-        <!--每隔8秒执行-->
-        <property name="cronExpression" value="0/8 * * * * ?"/>
+        <!--每隔98秒执行-->
+        <property name="cronExpression" value="0/98 * * * * ?"/>
     </bean>
 
     <!-- Scheduler -->
