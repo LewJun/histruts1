@@ -80,7 +80,16 @@
         <property name="arguments" ref="securityManager"/>
     </bean>
 
-    <bean id="databaseRealm" class="com.microandroid.shiro.DatabaseRealm"/>
+    <!-- 密码匹配器 -->
+    <bean id="credentialsMatcher" class="org.apache.shiro.authc.credential.HashedCredentialsMatcher">
+        <property name="hashAlgorithmName" value="md5"/>
+        <property name="hashIterations" value="1"/>
+        <property name="storedCredentialsHexEncoded" value="true"/>
+    </bean>
+
+    <bean id="databaseRealm" class="com.microandroid.shiro.DatabaseRealm">
+        <property name="credentialsMatcher" ref="credentialsMatcher"/>
+    </bean>
 
     <!-- 保证实现了Shiro内部lifecycle函数的bean执行 -->
     <bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor"/>
