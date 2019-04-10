@@ -3209,5 +3209,39 @@ public class DatabaseRealm extends AuthorizingRealm {
 
 ```
 
+7. 密码匹配器
 
+spring-shiro.xml
 
+```xml
+
+    <!-- 密码匹配器 -->
+    <bean id="credentialsMatcher" class="org.apache.shiro.authc.credential.HashedCredentialsMatcher">
+        <property name="hashAlgorithmName" value="md5"/>
+        <property name="hashIterations" value="1"/>
+        <property name="storedCredentialsHexEncoded" value="true"/>
+    </bean>
+
+    <bean id="databaseRealm" class="com.microandroid.shiro.DatabaseRealm">
+        <property name="credentialsMatcher" ref="credentialsMatcher"/>
+    </bean>
+
+```
+
+DatabaseRealm.java
+```java
+
+    @Override
+    protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
+
+        UsernamePasswordToken upt = (UsernamePasswordToken) token;
+        String username = upt.getPrincipal().toString();
+        User user = userService.selectByUsername(username);
+        SimpleAuthenticationInfo a = new SimpleAuthenticationInfo(
+                username
+                , user.getPassword()
+                , ByteSource.Util.bytes(user.getSalt())
+                , getName());
+        return a;
+}
+```
