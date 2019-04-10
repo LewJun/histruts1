@@ -3245,3 +3245,6 @@ DatabaseRealm.java
         return a;
 }
 ```
+
+#### 初始化数据库数据
+见 [../dbscript/1.0-SNAPSHOT.sql](dbscript/1.0-SNAPSHOT.sql)
