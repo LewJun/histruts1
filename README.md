@@ -3248,3 +3248,68 @@ DatabaseRealm.java
 
 #### 初始化数据库数据
 见 [../dbscript/1.0-SNAPSHOT.sql](dbscript/1.0-SNAPSHOT.sql)
+
+
+### jsp 自定义tag
+
+#### 添加依赖
+```xml
+
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>jsp-api</artifactId>
+            <version>2.0</version>
+            <scope>provided</scope>
+        </dependency>
+```
+
+### TagHelloWorld.java
+```java
+package com.microandroid.tags;
+
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.JspWriter;
+import javax.servlet.jsp.tagext.SimpleTagSupport;
+import java.io.IOException;
+
+public class TagHelloWorld extends SimpleTagSupport {
+    @Override
+    public void doTag() throws JspException, IOException {
+        super.doTag();
+//        得到输出对象
+        JspWriter out = getJspContext().getOut();
+//        输出内容
+        out.write("Hello World");
+    }
+}
+
+```
+
+TagHelloWorld需要继承SimpleTagSupport 并重写doTag方法
+
+### TagHelloWorld.tld
+
+```xml
+<?xml version="1.0" encoding="utf-8" ?>
+<taglib>
+    <tlib-version>1.0</tlib-version>
+    <jsp-version>2.0</jsp-version>
+    <short-name>TagHelloWorld TLD</short-name>
+    <tag>
+        <name>TagHelloWorld</name>
+        <tag-class>com.microandroid.tags.TagHelloWorld</tag-class>
+        <body-content>empty</body-content>
+    </tag>
+</taglib>
+
+```
+
+## 使用
+
+```html
+<%@ taglib prefix="tagHelloWorld" uri="WEB-INF/tags/my/TagHelloWorld.tld" %>
+
+<tagHelloWorld:TagHelloWorld/>
+
+```
+

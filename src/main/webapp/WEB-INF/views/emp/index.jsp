@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="shiro" uri="http://shiro.apache.org/tags" %>
+<%@ taglib prefix="tagCustom" uri="/WEB-INF/tags/my/customtag.tld" %>
 <!doctype html>
 <html>
 <head>
@@ -49,5 +50,7 @@
 <script src="${pageContext.request.contextPath}/static/plugins/jq/1.3.2/jquery.min.js"></script>
 <script src="${pageContext.request.contextPath}/static/js/emp/index.js"></script>
 <jsp:include page="edit.jsp"/>
+
+<tagCustom:TagHelloWorld/>
 </body>
 </html>
