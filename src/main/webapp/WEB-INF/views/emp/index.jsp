@@ -4,6 +4,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="shiro" uri="http://shiro.apache.org/tags" %>
 <%@ taglib prefix="tagCustom" uri="/WEB-INF/tags/my/customtag.tld" %>
+<%@ taglib prefix="w3" uri="/WEB-INF/tags/my/w3.tld" %>
 <!doctype html>
 <html>
 <head>
@@ -77,5 +78,12 @@
     <tr>
         </tagCustom:TagIterator>
 </table>
+
+<w3:W3Select
+        id="sel"
+        name="sel"
+        cls="w3-select"
+        defSelectedHint="Choose your option"/>
+
 </body>
 </html>

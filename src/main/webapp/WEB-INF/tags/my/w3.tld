@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<taglib>
+    <tlib-version>1.0</tlib-version>
+    <jsp-version>2.0</jsp-version>
+    <short-name>W3 TLD</short-name>
+    <tag>
+        <name>W3Select</name>
+        <tag-class>com.microandroid.tags.TagW3Select</tag-class>
+        <body-content>scriptless</body-content>
+        <attribute>
+            <name>id</name>
+        </attribute>
+
+        <attribute>
+            <name>name</name>
+        </attribute>
+
+        <attribute>
+            <name>cls</name>
+        </attribute>
+
+        <attribute>
+            <name>defSelectedHint</name>
+        </attribute>
+    </tag>
+
+</taglib>
