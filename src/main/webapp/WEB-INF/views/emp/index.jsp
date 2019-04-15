@@ -53,5 +53,10 @@
 
 <tagCustom:TagHelloWorld/>
 <tagCustom:TagHelloWorld2>这是要输出的内容</tagCustom:TagHelloWorld2>
+<tagCustom:TagHelloWorld3
+        msg="你好"
+        username="zhangsan"
+        age="5"
+/>
 </body>
 </html>

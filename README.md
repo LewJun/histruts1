@@ -3347,3 +3347,118 @@ public class TagHelloWorld2 extends SimpleTagSupport {
 <tagCustom:TagHelloWorld2>这是要输出的内容</tagCustom:TagHelloWorld2>
 ```
 
+### 自定义标签属性
+
+1. TagHelloWorld3.java
+
+```java
+package com.microandroid.tags;
+
+import org.springframework.util.StringUtils;
+
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.JspWriter;
+import javax.servlet.jsp.tagext.JspFragment;
+import javax.servlet.jsp.tagext.SimpleTagSupport;
+import java.io.IOException;
+import java.io.StringWriter;
+
+/**
+ * 自定义属性
+ */
+public class TagHelloWorld3 extends SimpleTagSupport {
+
+    /**
+     * 消息
+     */
+    private String msg;
+
+    /**
+     * 用户名
+     */
+    private String username;
+
+    /**
+     * 年龄
+     */
+    private int age;
+
+    public void setMsg(String msg) {
+        this.msg = msg;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    private StringWriter sw = new StringWriter();
+
+    @Override
+    public void doTag() throws JspException, IOException {
+        super.doTag();
+
+        JspWriter out = getJspContext().getOut();
+        StringBuilder sb = new StringBuilder();
+        JspFragment jspBody = getJspBody();
+        if (jspBody != null) {
+            jspBody.invoke(sw);
+            String s = sw.toString();
+            if (s != null) {
+                out.write(s);
+            }
+        } else {
+            if (!StringUtils.isEmpty(msg)) {
+                sb.append(msg).append(", ");
+            }
+            if (!StringUtils.isEmpty(username)) {
+                sb.append(String.format("my name is %s", username));
+            }
+            if (age > 0) {
+                sb.append(String.format(" , I'm %d years old! ", age));
+            }
+
+            out.write(sb.toString());
+        }
+    }
+}
+
+```
+
+2. TagHelloWorld3配置
+
+```xml
+
+    <tag>
+        <name>TagHelloWorld3</name>
+        <tag-class>com.microandroid.tags.TagHelloWorld3</tag-class>
+        <body-content>scriptless</body-content>
+        <attribute>
+            <name>msg</name>
+        </attribute>
+
+        <attribute>
+            <name>username</name>
+            <required>true</required>
+        </attribute>
+
+        <attribute>
+            <name>age</name>
+            <required>true</required>
+        </attribute>
+    </tag>
+```
+
+3. 使用
+
+```html
+<tagCustom:TagHelloWorld3
+        msg="你好"
+        username="zhangsan"
+        age="5"
+/>
+```
+

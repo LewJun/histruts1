@@ -17,4 +17,23 @@
         <tag-class>com.microandroid.tags.TagHelloWorld2</tag-class>
         <body-content>scriptless</body-content>
     </tag>
+
+    <tag>
+        <name>TagHelloWorld3</name>
+        <tag-class>com.microandroid.tags.TagHelloWorld3</tag-class>
+        <body-content>scriptless</body-content>
+        <attribute>
+            <name>msg</name>
+        </attribute>
+
+        <attribute>
+            <name>username</name>
+            <required>true</required>
+        </attribute>
+
+        <attribute>
+            <name>age</name>
+            <required>true</required>
+        </attribute>
+    </tag>
 </taglib>
