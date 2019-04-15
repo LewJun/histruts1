@@ -52,5 +52,6 @@
 <jsp:include page="edit.jsp"/>
 
 <tagCustom:TagHelloWorld/>
+<tagCustom:TagHelloWorld2>这是要输出的内容</tagCustom:TagHelloWorld2>
 </body>
 </html>

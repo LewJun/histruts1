@@ -11,4 +11,10 @@
         <tag-class>com.microandroid.tags.TagHelloWorld</tag-class>
         <body-content>empty</body-content>
     </tag>
+
+    <tag>
+        <name>TagHelloWorld2</name>
+        <tag-class>com.microandroid.tags.TagHelloWorld2</tag-class>
+        <body-content>scriptless</body-content>
+    </tag>
 </taglib>

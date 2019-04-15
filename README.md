@@ -3304,12 +3304,46 @@ TagHelloWorld需要继承SimpleTagSupport 并重写doTag方法
 
 ```
 
-## 使用
+### 使用
 
 ```html
 <%@ taglib prefix="tagHelloWorld" uri="WEB-INF/tags/my/TagHelloWorld.tld" %>
 
 <tagHelloWorld:TagHelloWorld/>
 
+```
+
+### 访问标签体
+
+1. TagHelloWorld2.java
+```java
+public class TagHelloWorld2 extends SimpleTagSupport {
+    private StringWriter sw = new StringWriter();
+
+    @Override
+    public void doTag() throws JspException, IOException {
+        super.doTag();
+//        得到tag内的内容<TagHelloWorld2>Hello Tag</TagHelloWorld2>
+        getJspBody().invoke(sw);
+        getJspContext().getOut().write(sw.toString());
+    }
+}
+
+```
+
+2. 配置TagHelloWorld2 body-content为scriptless
+```xml
+
+    <tag>
+        <name>TagHelloWorld2</name>
+        <tag-class>com.microandroid.tags.TagHelloWorld2</tag-class>
+        <body-content>scriptless</body-content>
+    </tag>
+```
+
+3. 使用
+```html
+
+<tagCustom:TagHelloWorld2>这是要输出的内容</tagCustom:TagHelloWorld2>
 ```
 
