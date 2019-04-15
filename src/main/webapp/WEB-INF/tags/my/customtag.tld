@@ -36,4 +36,19 @@
             <required>true</required>
         </attribute>
     </tag>
+
+    <tag>
+        <name>TagIterator</name>
+        <tag-class>com.microandroid.tags.TagIterator</tag-class>
+        <body-content>scriptless</body-content>
+        <attribute>
+            <name>collection</name>
+            <required>true</required>
+        </attribute>
+        <attribute>
+            <name>item</name>
+            <required>true</required>
+        </attribute>
+    </tag>
+
 </taglib>

@@ -3462,3 +3462,97 @@ public class TagHelloWorld3 extends SimpleTagSupport {
 />
 ```
 
+### 带标签体的标签
+1. TagIterator.java
+```java
+package com.microandroid.tags;
+
+import javax.servlet.jsp.JspContext;
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.SimpleTagSupport;
+import java.io.IOException;
+import java.util.Collection;
+
+public class TagIterator extends SimpleTagSupport {
+    /**
+     * 标签属性，用于指定需要被迭代的集合
+     */
+    private String collection;
+
+    /**
+     * 标签属性，指定迭代集合元素，为集合元素指定的名称
+     */
+    private String item;
+
+    public String getCollection() {
+        return collection;
+    }
+
+    public void setCollection(String collection) {
+        this.collection = collection;
+    }
+
+    public String getItem() {
+        return item;
+    }
+
+    public void setItem(String item) {
+        this.item = item;
+    }
+
+    @Override
+    public void doTag() throws JspException, IOException {
+        super.doTag();
+        JspContext jspContext = getJspContext();
+        Collection itemList = (Collection) jspContext.getAttribute(collection);
+        for (Object itemVal : itemList) {
+            //将集合的元素设置到page 范围
+            jspContext.setAttribute(item, itemVal);
+            getJspBody().invoke(null);
+        }
+    }
+}
+
+```
+
+2. TagIterator配置
+```xml
+
+    <tag>
+        <name>TagIterator</name>
+        <tag-class>com.microandroid.tags.TagIterator</tag-class>
+        <body-content>scriptless</body-content>
+        <attribute>
+            <name>collection</name>
+            <required>true</required>
+        </attribute>
+        <attribute>
+            <name>item</name>
+            <required>true</required>
+        </attribute>
+    </tag>
+
+```
+
+3. 使用
+
+```html
+
+<%
+    //创建一个List对象
+    List<String> list = new ArrayList<String>();
+    list.add("hello");
+    list.add("world");
+    list.add("java");
+    //将List对象放入page范围内
+    pageContext.setAttribute("a", list);
+%>
+<table border="1" bgcolor="#cecece" width="300">
+    <%--使用迭代器标签，对a集合进行迭代--%>
+    <tagCustom:TagIterator collection="a" item="item">
+    <tr>
+        <td>${pageScope.item}</td>
+    <tr>
+        </tagCustom:TagIterator>
+</table>
+```

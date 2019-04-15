@@ -1,3 +1,5 @@
+<%@ page import="java.util.ArrayList" %>
+<%@ page import="java.util.List" %>
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="shiro" uri="http://shiro.apache.org/tags" %>
@@ -58,5 +60,22 @@
         username="zhangsan"
         age="5"
 />
+<%
+    //创建一个List对象
+    List<String> list = new ArrayList<String>();
+    list.add("hello");
+    list.add("world");
+    list.add("java");
+    //将List对象放入page范围内
+    pageContext.setAttribute("a", list);
+%>
+<table border="1" bgcolor="#cecece" width="300">
+    <%--使用迭代器标签，对a集合进行迭代--%>
+    <tagCustom:TagIterator collection="a" item="item">
+    <tr>
+        <td>${pageScope.item}</td>
+    <tr>
+        </tagCustom:TagIterator>
+</table>
 </body>
 </html>
