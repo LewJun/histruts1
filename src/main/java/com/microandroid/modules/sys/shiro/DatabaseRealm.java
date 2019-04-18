@@ -1,7 +1,7 @@
-package com.microandroid.shiro;
+package com.microandroid.modules.sys.shiro;
 
-import com.microandroid.modules.user.dto.User;
-import com.microandroid.modules.user.service.IUserService;
+import com.microandroid.modules.sys.dto.User;
+import com.microandroid.modules.sys.service.IUserService;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;

@@ -1,20 +1,20 @@
-package com.microandroid.modules.login.form;
+package com.microandroid.modules.sys.dto;
 
-import org.apache.struts.action.ActionForm;
+public class User {
+    private int id;
 
-public class LoginForm extends ActionForm {
     private String username;
 
     private String password;
 
-    private boolean rememberMe;
+    private String salt;
 
-    public boolean isRememberMe() {
-        return rememberMe;
+    public int getId() {
+        return id;
     }
 
-    public void setRememberMe(boolean rememberMe) {
-        this.rememberMe = rememberMe;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getUsername() {
@@ -31,5 +31,13 @@ public class LoginForm extends ActionForm {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getSalt() {
+        return salt;
+    }
+
+    public void setSalt(String salt) {
+        this.salt = salt;
     }
 }

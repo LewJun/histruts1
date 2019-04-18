@@ -1,7 +1,7 @@
-package com.microandroid.modules.login.action;
+package com.microandroid.modules.sys.action;
 
 import com.microandroid.base.BaseAppAction;
-import com.microandroid.modules.login.form.LoginForm;
+import com.microandroid.modules.sys.form.LoginForm;
 import com.microandroid.utils.MappingUtil;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;

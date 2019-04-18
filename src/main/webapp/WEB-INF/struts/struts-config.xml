@@ -6,7 +6,7 @@
 <struts-config>
     <form-beans>
         <form-bean name="empForm" type="com.microandroid.modules.emp.form.EmpForm"/>
-        <form-bean name="loginForm" type="com.microandroid.modules.login.form.LoginForm"/>
+        <form-bean name="loginForm" type="com.microandroid.modules.sys.form.LoginForm"/>
     </form-beans>
 
     <!--全局异常处理器

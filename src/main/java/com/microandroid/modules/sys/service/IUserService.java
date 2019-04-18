@@ -1,7 +1,7 @@
-package com.microandroid.modules.user.service;
+package com.microandroid.modules.sys.service;
 
 import com.baomidou.mybatisplus.service.IService;
-import com.microandroid.modules.user.dto.User;
+import com.microandroid.modules.sys.dto.User;
 
 public interface IUserService extends IService<User> {
     /**

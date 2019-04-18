@@ -87,7 +87,7 @@
         <property name="storedCredentialsHexEncoded" value="true"/>
     </bean>
 
-    <bean id="databaseRealm" class="com.microandroid.shiro.DatabaseRealm">
+    <bean id="databaseRealm" class="com.microandroid.modules.sys.shiro.DatabaseRealm">
         <property name="credentialsMatcher" ref="credentialsMatcher"/>
     </bean>
 
