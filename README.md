@@ -3556,3 +3556,91 @@ public class TagIterator extends SimpleTagSupport {
         </tagCustom:TagIterator>
 </table>
 ```
+
+### shiro 基于URL动态配置权限
+> 原理：通过拦截器来实现，即如果访问的URL需要验证，并在用户的权限中，则放行。如果不需要验证则直接通过。
+
+#### 继承PathMatchingFilter实现
+
+UrlPathMatchingFilter.java 
+
+```java
+package com.microandroid.modules.sys.filter;
+
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
+import org.apache.shiro.web.filter.PathMatchingFilter;
+import org.apache.shiro.web.util.WebUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+public class UrlPathMatchingFilter extends PathMatchingFilter {
+    private static final Logger LOGGER = LoggerFactory.getLogger(UrlPathMatchingFilter.class);
+
+    @Override
+    protected boolean onPreHandle(ServletRequest request, ServletResponse response, Object mappedValue) throws Exception {
+        HttpServletRequest req = (HttpServletRequest) request;
+        HttpServletResponse resp = (HttpServletResponse) response;
+
+        Subject subject = SecurityUtils.getSubject();
+        // 如果没有登录，就跳转到登录页面
+        if (!subject.isAuthenticated()) {
+            WebUtils.issueRedirect(req, resp, "/login.jsp");
+            return false;
+        }
+//        String path = req.getServletPath()+req.getQueryString();
+        // 如果当前路径地址不在权限表中，则表示不需要验证
+//        if (! url not in permission) {
+//            return true;
+//        } else {
+//            // 判断当前用户是否拥有对应的权限
+//            return true;
+//        }
+
+//        默认返回true，表示路径都通过验证
+        return true;
+    }
+}
+
+```
+
+#### spring-shiro.xml中配置如上拦截器
+
+```xml
+    <bean id="urlPathMatchingFilter"
+          class="com.microandroid.modules.sys.filter.UrlPathMatchingFilter"/>
+<!--过滤器-->
+        <property name="filters">
+            <util:map>
+                <!-- 退出 -->
+                <entry key="logout" value-ref="logoutFilter"/>
+                <entry key="url" value-ref="urlPathMatchingFilter"/>
+            </util:map>
+        </property>
+
+
+<!-- 权限配置 -->
+        <property name="filterChainDefinitions">
+            <value>
+                <!-- anon表示此地址不需要任何权限即可访问 -->
+                /loginAction.do=anon
+                /login.jsp=anon
+                /static/**=anon
+                /doLogout=logout
+                <!--所有的请求(除去配置的静态资源请求或请求地址为anon的请求)都要通过登录验证,如果未登录则跳到loginUrl -->
+                <!--/**=authc 已登录可访问-->
+                <!--已登录或记住我可访问-->
+                <!--/**=user-->
+
+                <!--所有的请求(除去配置的静态资源请求或请求地址为anon的请求)都要通过过滤器url -->
+                /**=url
+            </value>
+        </property>
+```
+
+
