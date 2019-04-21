@@ -40,4 +40,14 @@ public class Permission {
     public void setUrl(String url) {
         this.url = url;
     }
+
+    @Override
+    public String toString() {
+        return "Permission{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", desc_='" + desc_ + '\'' +
+                ", url='" + url + '\'' +
+                '}';
+    }
 }

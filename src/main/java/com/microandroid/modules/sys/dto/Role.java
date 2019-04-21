@@ -30,4 +30,13 @@ public class Role {
     public void setDesc_(String desc_) {
         this.desc_ = desc_;
     }
+
+    @Override
+    public String toString() {
+        return "Role{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", desc_='" + desc_ + '\'' +
+                '}';
+    }
 }
