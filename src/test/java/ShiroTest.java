@@ -48,7 +48,7 @@ public class ShiroTest {
      */
     private Subject getSubject() {
         //加载配置文件，并获取工厂
-        Factory<SecurityManager> factory = new IniSecurityManagerFactory("classpath:shiro.ini");
+        Factory<SecurityManager> factory = new IniSecurityManagerFactory("classpath:realm.ini");
         //获取安全管理者实例
         SecurityManager sm = factory.getInstance();
         //将安全管理者放入全局对象

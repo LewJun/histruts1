@@ -1,4 +1,4 @@
-package com.microandroid.modules.sys.shiro;
+package com.microandroid.modules.sys.realm;
 
 import com.microandroid.modules.sys.dto.User;
 import com.microandroid.modules.sys.service.IUserService;
