@@ -15,6 +15,10 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * URL路径匹配过滤器
+ * 判断用户访问的路径是否需要验证
+ */
 public class UrlPathMatchingFilter extends PathMatchingFilter {
     private static final Logger LOGGER = LoggerFactory.getLogger(UrlPathMatchingFilter.class);
 
@@ -27,8 +31,9 @@ public class UrlPathMatchingFilter extends PathMatchingFilter {
         HttpServletResponse resp = (HttpServletResponse) response;
 
         Subject subject = SecurityUtils.getSubject();
-        // 如果没有登录，就跳转到登录页面
-        if (!subject.isAuthenticated()) {
+        // 如果没有登录并且不是通过记住我进入页面，或者不是通过记住我进入的，就跳转到登录页面
+        boolean isAuthenticated = subject.isAuthenticated();
+        if (!isAuthenticated && !subject.isRemembered()) {
             WebUtils.issueRedirect(req, resp, "/login.jsp");
             return false;
         }
@@ -45,7 +50,11 @@ public class UrlPathMatchingFilter extends PathMatchingFilter {
 //            // 判断当前用户是否拥有对应的权限
             int pid = permission.getId();
             String username = subject.getPrincipal().toString();
-            return permissionService.selectByIdAndUsername(pid, username) != null;
+
+            Permission p = permissionService.selectByIdAndUsername(pid, username);
+
+            // 其实还应该判断该URL是否需要用户登录，而不是通过记住我进入的。if (p.isAuthenticated()) {}
+            return p != null;
         }
     }
 }
