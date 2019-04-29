@@ -3643,4 +3643,69 @@ public class UrlPathMatchingFilter extends PathMatchingFilter {
         </property>
 ```
 
+### 集成Kaptcha验证码
+#### 添加依赖
+```xml
 
+        <!--
+        集成Kaptcha，Kaptcha是谷歌开源的一个验证码插件, 通过在Web.xml中配置内置的Servlet即可实现生成验证码.
+        -->
+        <dependency>
+            <groupId>com.github.penggle</groupId>
+            <artifactId>kaptcha</artifactId>
+            <version>2.3.2</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.servlet</groupId>
+                    <artifactId>javax.servlet-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+```
+
+#### 配置web.xml
+
+增加Kaptcha内置Servlet配置
+```xml
+
+    <!-- Kaptcha Servlet -->
+    <servlet>
+        <servlet-name>Kaptcha</servlet-name>
+        <servlet-class>com.google.code.kaptcha.servlet.KaptchaServlet</servlet-class>
+        <!-- 参数可见com.google.code.kaptcha.util.Config -->
+        <init-param>
+            <param-name>kaptcha.image.width</param-name>
+            <param-value>200</param-value>
+        </init-param>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Kaptcha</servlet-name>
+        <url-pattern>/kaptcha</url-pattern>
+    </servlet-mapping>
+```
+
+#### login.jsp
+
+```html
+<img src="${pageContext.request.contextPath}/kaptcha" alt="kaptcha" />
+<input type="text" name="captchaCode" placeholder="验证码" /> 
+```
+
+#### /kaptcha=anon
+在spring-shiro.xml中配置/kaptcha可以匿名访问
+
+#### 逻辑判断验证码是否正确
+```java
+//        从session中得到验证码
+        String kaptcha_session_key = (String) request.getSession().getAttribute("KAPTCHA_SESSION_KEY");
+        LOGGER.info("KAPTCHA_SESSION_KEY={}", kaptcha_session_key);
+        LoginForm loginForm = (LoginForm) form;
+        String captchaCode = loginForm.getCaptchaCode();
+        if (!StringUtils.isEmpty(kaptcha_session_key)
+                && (StringUtils.isEmpty(captchaCode) || !kaptcha_session_key.equals(captchaCode))
+        ) {
+            LOGGER.error("需要输入验证码");
+            return MappingUtil.forward(mapping, "login");
+        }
+```

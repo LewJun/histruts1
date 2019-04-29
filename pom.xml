@@ -98,8 +98,8 @@
         <!--配置servlet 和 jstl 开始-->
         <dependency>
             <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
-            <version>2.5</version>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>3.1.0</version>
             <scope>provided</scope>
         </dependency>
 
@@ -378,6 +378,20 @@
         </dependency>
         <!--dbutils end-->
 
+        <!--
+        集成Kaptcha，Kaptcha是谷歌开源的一个验证码插件, 通过在Web.xml中配置内置的Servlet即可实现生成验证码.
+        -->
+        <dependency>
+            <groupId>com.github.penggle</groupId>
+            <artifactId>kaptcha</artifactId>
+            <version>2.3.2</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.servlet</groupId>
+                    <artifactId>javax.servlet-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
     </dependencies>
 
     <!-- 环境管理 -->

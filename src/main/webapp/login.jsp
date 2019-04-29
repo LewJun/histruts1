@@ -15,8 +15,10 @@
 <div class="w3-container w3-center">
     <h1>User Login</h1>
     <form name="loginForm" action="loginAction.do?method=login" method="POST">
-        <input type="text" name="username" placeholder="Type your Name">
-        <input type="password" name="password" placeholder="Type your Pwd">
+        <input type="text" name="username" placeholder="用户名">
+        <input type="password" name="password" placeholder="密码">
+        <img src="${pageContext.request.contextPath}/kaptcha" alt="kaptcha"/>
+        <input type="text" name="captchaCode" placeholder="验证码" value=""/>
         <label>
             <input type="checkbox" name="rememberMe">记住我
         </label>

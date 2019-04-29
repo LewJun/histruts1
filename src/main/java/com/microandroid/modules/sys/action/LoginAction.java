@@ -11,6 +11,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -25,7 +26,17 @@ public class LoginAction extends BaseAppAction {
     public ActionForward login(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                HttpServletResponse response) throws Exception {
         LOGGER.info("login");
+//        从session中得到验证码
+        String kaptcha_session_key = (String) request.getSession().getAttribute("KAPTCHA_SESSION_KEY");
+        LOGGER.info("KAPTCHA_SESSION_KEY={}", kaptcha_session_key);
         LoginForm loginForm = (LoginForm) form;
+        String captchaCode = loginForm.getCaptchaCode();
+        if (!StringUtils.isEmpty(kaptcha_session_key)
+                && (StringUtils.isEmpty(captchaCode) || !kaptcha_session_key.equals(captchaCode))
+        ) {
+            LOGGER.error("需要输入验证码");
+            return MappingUtil.forward(mapping, "login");
+        }
         Subject subject = SecurityUtils.getSubject();
         UsernamePasswordToken token = new UsernamePasswordToken(
                 loginForm.getUsername(),

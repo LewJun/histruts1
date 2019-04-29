@@ -9,6 +9,16 @@ public class LoginForm extends ActionForm {
 
     private boolean rememberMe;
 
+    private String captchaCode;
+
+    public String getCaptchaCode() {
+        return captchaCode;
+    }
+
+    public void setCaptchaCode(String captchaCode) {
+        this.captchaCode = captchaCode;
+    }
+
     public boolean isRememberMe() {
         return rememberMe;
     }
